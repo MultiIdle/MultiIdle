@@ -47,9 +47,9 @@ io.on('connection', function(socket) {
     console.log('room id is:' + roomid);
     socket.emit('made-room', roomid);
   });
-  socket.on('score', function(score) {
-    console.log('user ' + id + ' has a score of ' + score);
-    socket.broadcast.emit('score', score);
+  socket.on('score', function(welp) {
+    console.log('user ' + id + ' has a score of ' + welp.score);
+    socket.broadcast.to(welp.roomid).emit('score', welp.score);
   });
 	
 	socket.on('request-pid', function(roomid) {
@@ -62,6 +62,7 @@ io.on('connection', function(socket) {
 			socket.emit('pid', pid);
 			rooms[roomid].pids.push(pid);
 			console.log(pid + ' has joined room ' + roomid);
+			socket.join(roomid);
 		}
 		else {
 			console.log('dangit: room is full');
@@ -73,8 +74,10 @@ io.on('connection', function(socket) {
 		if ((rooms[welp.roomid].pids.length > 0 && 
 			rooms[welp.roomid].pids[0] == welp.pid) ||
 			(rooms[welp.roomid].pids.length > 1 && 
-			rooms[welp.roomid].pids[1] == welp.pid))
+			rooms[welp.roomid].pids[1] == welp.pid)) {
 			socket.emit('authorized');
+			socket.join(welp.roomid);
+			}
 		else {
 			console.log('dangit: cookie failure');
 			console.log(rooms[welp.roomid]);

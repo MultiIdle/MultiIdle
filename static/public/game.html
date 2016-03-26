@@ -32,12 +32,15 @@
 	
 	var urlsplit = window.location.href.split('/');
 	var roomid = urlsplit[urlsplit.length - 1];
+	
 	var pid;
 	
 	var clicks = 0;
 	var oclicks = 0;
 	
 	var socket = io();
+	//socket.join(roomid);
+	
 	function onDeleteRoom() {
 		console.log('delete this room!');
 	};
@@ -69,8 +72,8 @@
 		pid = newpid;
 		document.cookie = 'pid=' + newpid + ' ; roomid=' + roomid; //add to this
 		document.cookie = 'roomid=' + roomid;
-		document.cookie = 'score=' + score;
-		document.cookie = 'oscore=' + oscore;
+		document.cookie = 'score=' + clicks;
+		document.cookie = 'oscore=' + oclicks;
 	});
 	
 	setInterval(function() { socket.emit('score', clicks); }, 500);
@@ -78,7 +81,7 @@
 	
 	function onClick() {
 		clicks += 1;
-		socket.emit('score', clicks);
+		socket.emit('score', {'score' : clicks, 'roomid' : roomid});
 		update();
 	};
 	
