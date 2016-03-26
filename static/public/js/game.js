@@ -30,21 +30,12 @@ var buildings = [
   { name : "Antimatter Condenser", base : 170000000000000, power: 430000000 },
   { name : "Prism", base : 2100000000000000, power: 2900000000}
 ];
-
-var consumables = [
-    {name : "Demolition", initial: 10, scaleC: 5, numberOf: 0 },
-    {name : "Raid", initial: 100, scaleC: 10, numberOf: 0},
-    {name : "Double Agent", initial: 1000, scaleC: 2, numberOf: 0}
-]
+var scale = 1.1;
 
 var points = 0,
-    pps = 0,
-    gross = 0,
-    freq = [],
-    ownedBuildings = 0,
-    scale = 1.1,
-    flip = 1;
-
+  gross = 0,
+  ogross = 0,
+  freq = [];
 for (var i = 0; i < buildings.length; i++) {
   freq.push(0);
 }
@@ -59,7 +50,7 @@ for (var i = 0; i < buildings.length; i++) {
       $('<td>').append(
         $('<button>')
           .attr('class', 'button')
-          .attr('onClick', 'buyBuilding(' + i.toString() +', 1)')
+          .attr('onClick', 'buyBuilding(' + i.toString() + ')')
           .text(buildings[i].name)
       )
     ).append(
@@ -75,40 +66,34 @@ function single() {
   ++gross;
   document.getElementById("points").innerHTML = Math.round(points);
   document.getElementById("gross").innerHTML = Math.round(gross);
-  checkPointsWin();
+  checkWin();
 }
 
 function updatePoints() {
-    
   for (var i = 0; i < buildings.length; i++) {
-    points += buildings[i].power * freq[i] * flip;
-    gross += buildings[i].power * freq[i] * flip;
+    points += buildings[i].power * freq[i];
+    gross += buildings[i].power * freq[i];
   }
-  document.getElementById("points").innerHTML = points;
-  document.getElementById("gross").innerHTML = gross;
   document.getElementById("points").innerHTML = Math.round(points);
   document.getElementById("gross").innerHTML = Math.round(gross);
-  checkPointsWin();
+  checkWin();
 }
 
-function buyBuilding(idx, factor) {
-    var pics = ['/iron.png', '/fire.png', '/scarybush.png', '/gun.png', 'iron.png', 'big-iron.png', 'nic-cage.png'];
-    var name = buildings[idx].name,
+var pics = ['/iron.png', '/fire.png', '/scarybush.png', '/gun.png', 'iron.png', 'big-iron.png', 'nic-cage.png'];
+
+function buyBuilding(idx) {
+  var name = buildings[idx].name,
     base = buildings[idx].base,
     num = freq[idx];
-    
   var price = base * Math.pow(scale, num);
-  if (price * factor <= points) {
-    ownedBuildings += factor;
-    freq[idx] += factor;
-    pps += buildings[idx].power * 20;
+  if (price <= points) {
+    ++freq[idx];
     points -= price;
     gross += price;
     document.getElementById("points").innerHTML = points;
     document.getElementById("freq" + idx.toString()).innerHTML = freq[idx];
     document.getElementById("price" + idx.toString()).innerHTML = price * scale;
-    document.getElementById("pps").innerHTML = pps;
-      var x = document.createElement("IMG");
+		var x = document.createElement("IMG");
 		x.src = pics[idx];
 		x.style = "position: absolute; bottom: 10";
 		document.body.appendChild(x);  
@@ -200,10 +185,17 @@ window.setInterval(function(){
   updatePoints();
 }, 50);
 
-var urlsplit = window.location.href.split('/');
-var roomid = urlsplit[urlsplit.length - 1];
+function readCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for(var i=0;i < ca.length;i++) {
+    var c = ca[i];
+    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+  }
+  return null;
+}
 
-var pid;
 function update() {
   document.getElementById("gross").innerHTML = Math.round(gross);
   document.getElementById("ogross").innerHTML = Math.round(ogross);
@@ -214,8 +206,7 @@ var urlsplit = window.location.href.split('/'),
     roomid = urlsplit[urlsplit.length - 1],
     pid,
     win,
-    limit,
-    origlimit;
+    limit;
 
 function readCookie(name) {
 		var nameEQ = name + "=";
@@ -231,12 +222,10 @@ function readCookie(name) {
 if (document.cookie && readCookie('roomid') == roomid) {
   pid = readCookie('pid');
   socket.emit('auth', {'pid': pid, 'roomid': roomid});
-  points = parseFloat(readCookie('points'));
-  gross = parseFloat(readCookie('score'));
-  ogross = parseFloat(readCookie('oscore'));
+  gross = parseInt(readCookie('score'));
+  ogross = parseInt(readCookie('oscore'));
   win = readCookie('win');
   limit = parseFloat(readCookie('limit'));
-  origlimit = limit;
   update();
 } else {
   socket.emit('request-pid', roomid);
@@ -247,30 +236,13 @@ socket.on('dangit', function() { window.location.href = '/';}); //do stuff
 socket.on('authorized', function(obj) {
   win = obj.win;
   document.cookie = 'win=' + win;
-  document.getElementById("win").innerHTML = win;
-  origlimit = obj.limit;
-  if (win == 'points') {
-    limit = obj.limit;
-    document.cookie = 'limit=' + limit.toString();
-  } else {
-    if (readCookie('limit') != limit) {
-      limit = origlimit;
-    }
-  }
-  document.getElementById("limit").innerHTML = limit;
-  if (obj.start) {
-    $.unblockUI({ fadeOut: 0 });
-  }
+  limit = obj.limit;
+  document.cookie = 'limit=' + limit.toString();
 }); //do stuff
 
-socket.on('score', function(obj) {
-  ogross = obj.score;
+socket.on('score', function(oscore) {
+  ogross = oscore;
   update();
-  if (win == 'time') {
-    var elap = obj.elap / 1000.0;
-    limit = Math.ceil(origlimit - elap);
-    document.getElementById("limit").innerHTML = limit;
-  }
 });
 
 socket.on('pid', function(newpid) {
@@ -283,27 +255,24 @@ socket.on('pid', function(newpid) {
 });
 
 window.setInterval(function() {
-  socket.emit('score', {'score' : gross, 'roomid' : roomid, 'pid' : pid});
+  socket.emit('score', {'score' : gross, 'roomid' : roomid});
 }, 500);
 window.setInterval(function() {
-  document.cookie= 'points=' + points;
   document.cookie= 'score=' + gross;
   document.cookie="oscore=" + ogross;
 }, 1000);
 
-function checkPointsWin() {
+function checkWin() {
   if (win == 'points') {
     if (points >= limit) {
       socket.emit('win', {'pid' : pid, 'roomid' : roomid});
     }
+  } else {
+
   }
 }
 
 socket.on('winner', function(winpid) {
-  if (win == 'time') {
-    limit = 0;
-    document.getElementById("limit").innerHTML = 0;
-  }
   if (pid == winpid) {
     alert('You won! Congratulations!');
   } else {

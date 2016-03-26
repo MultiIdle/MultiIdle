@@ -3,6 +3,21 @@ body{
   background: url(forestbgman.png) no-repeat;
   background-size: cover;
 }
+
+#main {
+  width: 100%;
+}
+
+#left {
+  width: 60%;
+  float: left;
+}
+
+#right {
+  width: 35%;
+  float: right;
+}
+
 .buttons {
   display: inline-block;
   border-radius: 4px;
@@ -12,7 +27,7 @@ body{
   text-align: center;
   font-size: 18px;
   padding: 10px;
-  width: 100px;
+  width: 400px;
   transition: all 0.5s;
   cursor: pointer;
   margin: 5px;

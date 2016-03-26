@@ -1,40 +1,51 @@
 body{
     color: white;
     font-family: "palatino linotype";
-  background: url(forestbgman.png) no-repeat;
-  background-size: cover;
-}
-#part1 {
-    width: 70%;
-    text-align: center;
-    float: left;
+    background: url(forestbgman.png) no-repeat;
+    background-size: cover;
+    background-position: left bottom;
 }
 
-#part2 {
-    width: 20%;
-    float: right;
+
+#win {
+    margin-top: -80px;
+}
+
+
+
+#bigScript {
+    font-family: "Brush Script MT", cursive;
+    font-size: 5em;
 }
 
 #generator {
     width: 40%;
+    padding: 10px;
 }
 
 .count {
     font-size: 1.2em
 }
 
-#middle {
-    float: right;
-    width: 30%;
-}
 
 #left {
-    width: 70%;
-    float: left;
+    width: 50%;
+    padding-left: 10px;
+    text-align: center;
+    top: 0;
+    margin-top: -10px;
 }
 
 #right {
-    width: 100%;
+    margin-top: -15px;
+    width: 50%;
+    float: right;
+    margin-right: 50px;
+    background: url(menubackground.jpg);
+    border-radius: 20px;
+    border-color: brown;
+    background-size:100%;
+    text-align: center;
 }
 
 .headings {
@@ -45,7 +56,7 @@ body{
 
 .tableHeader {
     background: url(menutitle.jpg);
-    width: 60%;
+    width: 100%;
     height:140%;
     border-radius: 5px;
     border-color: brown;
@@ -54,32 +65,29 @@ body{
     padding: 2px;
     font-size: 1.2em;
 }
-#middle{
-background: url(menubackground.jpg);
-    border-radius: 20px;
-    border-color: brown;
-background-size:100%;
-
-}
-
-#upgrade {
-    width: 20%;
-    display: inline-block;
-}
 
 .button {
     border: none;
     padding: 7px;
-    font-size: .8em;
-    background-color: #CFD2CD;
+    font-size: 1em;
+    background-color: transparent;
     text-align: center;
     float: left;
     border-radius: 5px;
     font-family: serif;
+    color: white;
 }
 
 .button:hover {
     background-color: #46494C;
     color: white;
     font-weight: 600;
+}
+
+#generator:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+  width: 41%;
+  opacity: 0.9;
 }
