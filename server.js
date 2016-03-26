@@ -9,7 +9,7 @@ app.use('/', express.static('static/public'));
 app.get('/game/:roomid', function(req, res) {
   var roomid = req.params.roomid;
   if (rooms[roomid]) { // room exists
-    res.sendFile(path.join(__dirname + '/static/public/game.html'));
+    res.sendFile(path.join(__dirname + '/static/public/simple.html'));
   } else {
     res.writeHead(500, {'content-type': 'text/plain'});
     res.end('Room does not exist!');

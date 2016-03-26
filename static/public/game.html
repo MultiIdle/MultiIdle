@@ -1,90 +1,58 @@
 <html>
   <head>
-    <title>Room</title>
-    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-	</head>
+    <title>MultiIdle</title>
+    <link rel="stylesheet" type="text/css" href="interface.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  </head>
 
   <body>
-    <button type="button" onClick="onDeleteRoom()">Delete Room</button>
-		<button type="button" onClick="onClick()">Click me</button>
-    <p>Clicks: <a id="clicks">0</a></p>
-    <p>Opponent: <a id="oclicks">0</a></p>
-	</body>
+    <div id="main">
+      <h2>MultiIdle</h2>
+      <div id="part1">
+      <div id="left">
+          <input type="image" id="generator" src="http://www.americanmethod.com/assets/images/items/ROUND_Vote_Trump_16_sticker.jpg" onclick="single()"></input>
+          <br/>
+          <br/>
+          <span class="count">Number of votes:
+          <span id="points">0</span>
+          </span>
+          
+          <br/>
+          <br/>
+          <span class="grossCount">Gross number of votes: 
+          <span id="gross">0</span></span>
+          <br>
 
-  <script>
-	function readCookie(name) {
-		var nameEQ = name + "=";
-		var ca = document.cookie.split(';');
-		for(var i=0;i < ca.length;i++) {
-			var c = ca[i];
-			while (c.charAt(0)==' ') c = c.substring(1,c.length);
-			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-		}
-		return null;
-	}
-	
-	function update() {
-		document.getElementById("clicks").innerHTML = clicks;
-		document.getElementById("oclicks").innerHTML = oclicks;
-	}
-	
-	
-	
-	var urlsplit = window.location.href.split('/');
-	var roomid = urlsplit[urlsplit.length - 1];
-	
-	var pid;
-	
-	var clicks = 0;
-	var oclicks = 0;
-	
-	var socket = io();
-	//socket.join(roomid);
-	
-	function onDeleteRoom() {
-		console.log('delete this room!');
-	};
-	
-	var clicks = 0;
-	var oclicks = 0;
-	
-	if (document.cookie && readCookie('roomid') == roomid) {
-		pid = readCookie('pid');
-		socket.emit('auth', {'pid': pid, 'roomid': roomid});
-		clicks = parseInt(readCookie('score'));
-		oclicks = parseInt(readCookie('oscore'));
-		update();
-	}
-	else {
-		socket.emit('request-pid', roomid);
-	}
-	
-	socket.on('dangit', function(){window.location = '/';}); //do stuff
-	
-	socket.on('authorized', function(){}); //do stuff
-	
-	socket.on('score', function(oscore){
-		oclicks = oscore;
-		update();
-	})
-	
-	socket.on('pid', function(newpid) {
-		pid = newpid;
-		document.cookie = 'pid=' + newpid + ' ; roomid=' + roomid; //add to this
-		document.cookie = 'roomid=' + roomid;
-		document.cookie = 'score=' + clicks;
-		document.cookie = 'oscore=' + oclicks;
-	});
-	
-	setInterval(function() { socket.emit('score', clicks); }, 500);
-	setInterval(function() { document.cookie= 'score=' + clicks; document.cookie="oscore=" + oclicks;}, 1000);
-	
-	function onClick() {
-		clicks += 1;
-		socket.emit('score', {'score' : clicks, 'roomid' : roomid});
-		update();
-	};
-	
-  </script>
+          <br/>
+          <br/>
+          <span class="grossCount">Opponent Gross votes: 
+          <span id="ogross">0</span></span>
+          <br>
+      </div>
 
+      <div id="middle">
+        <table style="width:100%" id="buildings">
+          <thead>
+            <tr>
+              <td class="tableHeader" colspan="3">AutoClickers</td>
+            </tr>
+            <tr>
+              <td>Frequency</td>
+              <td>Building</td>
+              <td>Price</td>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="part2">
+      <h2>Opponent</h2>
+    </div>
+    </div>
+
+    <script type="text/javascript" src="game.js"></script>
+  </body>
 </html>

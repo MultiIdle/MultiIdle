@@ -1,0 +1,90 @@
+<html>
+  <head>
+    <title>Room</title>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+	</head>
+
+  <body>
+    <button type="button" onClick="onDeleteRoom()">Delete Room</button>
+		<button type="button" onClick="onClick()">Click me</button>
+    <p>Clicks: <a id="clicks">0</a></p>
+    <p>Opponent: <a id="oclicks">0</a></p>
+	</body>
+
+  <script>
+	function readCookie(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		}
+		return null;
+	}
+	
+	function update() {
+		document.getElementById("clicks").innerHTML = clicks;
+		document.getElementById("oclicks").innerHTML = oclicks;
+	}
+	
+	
+	
+	var urlsplit = window.location.href.split('/');
+	var roomid = urlsplit[urlsplit.length - 1];
+	
+	var pid;
+	
+	var clicks = 0;
+	var oclicks = 0;
+	
+	var socket = io();
+	//socket.join(roomid);
+	
+	function onDeleteRoom() {
+		console.log('delete this room!');
+	};
+	
+	var clicks = 0;
+	var oclicks = 0;
+	
+	if (document.cookie && readCookie('roomid') == roomid) {
+		pid = readCookie('pid');
+		socket.emit('auth', {'pid': pid, 'roomid': roomid});
+		clicks = parseInt(readCookie('score'));
+		oclicks = parseInt(readCookie('oscore'));
+		update();
+	}
+	else {
+		socket.emit('request-pid', roomid);
+	}
+	
+	socket.on('dangit', function(){window.location = '/';}); //do stuff
+	
+	socket.on('authorized', function(){}); //do stuff
+	
+	socket.on('score', function(oscore){
+		oclicks = oscore;
+		update();
+	})
+	
+	socket.on('pid', function(newpid) {
+		pid = newpid;
+		document.cookie = 'pid=' + newpid + ' ; roomid=' + roomid; //add to this
+		document.cookie = 'roomid=' + roomid;
+		document.cookie = 'score=' + clicks;
+		document.cookie = 'oscore=' + oclicks;
+	});
+	
+	setInterval(function() { socket.emit('score', clicks); }, 500);
+	setInterval(function() { document.cookie= 'score=' + clicks; document.cookie="oscore=" + oclicks;}, 1000);
+	
+	function onClick() {
+		clicks += 1;
+		socket.emit('score', {'score' : clicks, 'roomid' : roomid});
+		update();
+	};
+	
+  </script>
+
+</html>

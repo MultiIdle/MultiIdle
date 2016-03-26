@@ -47,8 +47,8 @@ for (var i = 0; i < buildings.length; i++) {
 function single() {
   ++points;
   ++gross;
-  document.getElementById("counter").innerHTML = points;
-  document.getElementById("gCount").innerHTML = gross;
+  document.getElementById("points").innerHTML = points;
+  document.getElementById("gross").innerHTML = gross;
 }
 
 function updatePoints() {
@@ -56,8 +56,8 @@ function updatePoints() {
     points += buildings[i].power * freq[i];
     gross += buildings[i].power * freq[i];
   }
-  document.getElementById("counter").innerHTML = points;
-  document.getElementById("gCount").innerHTML = gross;
+  document.getElementById("points").innerHTML = points;
+  document.getElementById("gross").innerHTML = gross;
 }
 
 function buyBuilding(idx) {
@@ -69,7 +69,7 @@ function buyBuilding(idx) {
     ++freq[idx];
     points -= price;
     gross += price;
-    document.getElementById("counter").innerHTML = points;
+    document.getElementById("points").innerHTML = points;
     document.getElementById("freq" + idx.toString()).innerHTML = freq[idx];
     document.getElementById("price" + idx.toString()).innerHTML = price * scale;
   }
