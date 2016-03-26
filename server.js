@@ -1,11 +1,20 @@
-var express = require('express');
-var app = express();
-var server = require('http').Server(app);
-var io = require('socket.io').listen(server);
+var express = require('express'),
+    app = express(),
+    server = require('http').Server(app),
+    io = require('socket.io').listen(server),
+    path = require('path');
 
 app.use('/', express.static('static/public'));
 
-app.use('/game', require('./routes/game/game'));
+app.get('/game/:roomid', function(req, res) {
+  var roomid = req.params.roomid;
+  if (rooms[roomid]) { // room exists
+    res.sendFile(path.join(__dirname + '/static/public/game.html'));
+  } else {
+    res.writeHead(500, {'content-type': 'text/plain'});
+    res.end('Room does not exist!');
+  }
+});
 
 function makeid() {
     var possible = 
@@ -17,8 +26,8 @@ function makeid() {
     return text;
 }
 
-sockets = {};
-rooms = {};
+var sockets = {};
+var rooms = {};
 io.on('connection', function(socket) {
   var id;
   do {
@@ -52,5 +61,3 @@ io.on('connection', function(socket) {
 server.listen(4200, function(){
   console.log('listening on *: 4200');
 });
-
-module.exports = app;
