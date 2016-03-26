@@ -26,8 +26,9 @@ function makeid() {
     return text;
 }
 
-var sockets = {};
-var rooms = {};
+var pids = {};
+sockets = {};
+rooms = {};
 io.on('connection', function(socket) {
   var id;
   do {
@@ -42,7 +43,7 @@ io.on('connection', function(socket) {
     do {
       roomid = makeid();
     } while(rooms[roomid]);
-    rooms[roomid] = true;
+    rooms[roomid] = { pids: [] };
     console.log('room id is:' + roomid);
     socket.emit('made-room', roomid);
   });
@@ -50,7 +51,48 @@ io.on('connection', function(socket) {
     console.log('user ' + id + ' has a score of ' + score);
     socket.broadcast.emit('score', score);
   });
-
+	
+	socket.on('request-pid', function(roomid) {
+		if (rooms[roomid].pids.length < 2) {
+			var pid;
+			do {
+				pid = makeid();
+			} while(pids[pid]);
+			pids[pid] = true;
+			socket.emit('pid', pid);
+			rooms[roomid].pids.push(pid);
+			console.log(pid + ' has joined room ' + roomid);
+		}
+		else {
+			console.log('dangit: room is full');
+			socket.emit('dangit');
+		}
+	});
+	
+	socket.on('auth', function(welp) {
+		if ((rooms[welp.roomid].pids.length > 0 && 
+			rooms[welp.roomid].pids[0] == welp.pid) ||
+			(rooms[welp.roomid].pids.length > 1 && 
+			rooms[welp.roomid].pids[1] == welp.pid))
+			socket.emit('authorized');
+		else {
+			console.log('dangit: cookie failure');
+			console.log(rooms[welp.roomid]);
+			console.log(welp);
+			socket.emit('dangit');
+		}
+	});
+	
+	socket.on('new-pid', function() {
+		var pid;
+		do {
+			pid = makeid();
+		} while(pids[pid]);
+		pids[pid] = true;
+		socket.emit('pid', pid);
+		socket.emit('authorized');
+	});
+	
   socket.on('disconnect', function() {
     sockets[socket] = undefined;
     delete sockets[socket];
@@ -61,3 +103,5 @@ io.on('connection', function(socket) {
 server.listen(4200, function(){
   console.log('listening on *: 4200');
 });
+
+module.exports = app;
