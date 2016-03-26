@@ -14,6 +14,7 @@ var buildings = [
   { name : "Antimatter Condenser", base : 170000000000000, power: 430000000 },
   { name : "Prism", base : 2100000000000000, power: 2900000000}
 ];
+var scale = 1.1;
 
 var points = 0,
   gross = 0;
@@ -23,14 +24,24 @@ for (var i = 0; i < buildings.length; i++) {
 }
 
 for (var i = 0; i < buildings.length; i++) {
-  $("#buildings").find('tbody')
-    .append($('<tr>')
-      .append($('<button>')
-        .attr('class', 'button')
-        .attr('onClick', 'buyBuilding(' + i.toString() + ')')
-          .text("Buy " + buildings[i].name + "!")
+  $("#buildings").find('tbody').append(
+    $('<tr>').append(
+      $('<td>')
+        .attr('id', 'freq' + i.toString())
+        .text('0')
+    ).append(
+      $('<td>').append(
+        $('<button>')
+          .attr('class', 'button')
+          .attr('onClick', 'buyBuilding(' + i.toString() + ')')
+          .text(buildings[i].name)
       )
-    );
+    ).append(
+      $('<td>')
+        .attr('id', 'price' + i.toString())
+        .text(buildings[i].base.toString())
+    )
+  );
 }
 
 function single() {
@@ -52,7 +63,6 @@ function updatePoints() {
 function buyBuilding(idx) {
   var name = buildings[idx].name,
     base = buildings[idx].base,
-    scale = buildings[idx].scale,
     num = freq[idx];
   var price = base * Math.pow(scale, num);
   if (price <= points) {
@@ -60,11 +70,12 @@ function buyBuilding(idx) {
     points -= price;
     gross += price;
     document.getElementById("counter").innerHTML = points;
-    document.getElementById(name + "Count").innerHTML = freq[idx];
+    document.getElementById("freq" + idx.toString()).innerHTML = freq[idx];
+    document.getElementById("price" + idx.toString()).innerHTML = price * scale;
   }
 }
 
 window.setInterval(function(){
   updatePoints()
   console.log(points);
-}, 1000);
+}, 50);
