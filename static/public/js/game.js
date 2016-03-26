@@ -143,3 +143,16 @@ window.setInterval(function() {
   document.cookie= 'score=' + gross;
   document.cookie="oscore=" + ogross;
 }, 1000);
+
+
+var modal = document.getElementById('myModal');
+
+
+    function first(){
+      modal.style.display = "block"
+      document.getElementById("textbox").innerHTML = window.location.href
+
+    }
+    function enter(){
+      modal.style.display = "none";
+    }

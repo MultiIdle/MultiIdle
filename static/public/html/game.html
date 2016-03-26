@@ -2,11 +2,12 @@
   <head>
     <title>MultiIdle</title>
     <link rel="stylesheet" type="text/css" href="interface.css" />
+        <link rel="stylesheet" href="game.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
   </head>
 
-  <body>
+  <body onload="first()">
     <div id="main">
       <h2>MultiIdle</h2>
       <div id="part1">
@@ -53,6 +54,36 @@
       <h2>Opponent</h2>
     </div>
     </div>
+
+
+
+
+
+  <!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header" style = "text-align: center">
+      <h2>Link for your opponent</h2>
+    </div>
+    <div class="modal-body" style = "text-align: center">
+      <textarea id="textbox" style="font-size: 24px;" readonly></textarea><br><br>
+    </div>
+    <div class="modal-footer" style = "text-align: center">
+       <button class="buttons" style="vertical-align:middle" onClick="enter()"><span>Start </span></button>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+</div>
+
   </body>
 
   <script type="text/javascript" src="game.js"></script>
