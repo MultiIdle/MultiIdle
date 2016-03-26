@@ -2,16 +2,59 @@
   <head>
     <title>Room</title>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-  </head>
+	</head>
 
   <body>
-    <button type="button" onClick="onClick()">Delete Room</button>
-  </body>
+    <button type="button" onClick="onDeleteRoom()">Delete Room</button>
+	</body>
 
   <script>
-    function onClick() {
-      console.log('delete this room!');
-    };
+	function readCookie(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		}
+		return null;
+	}
+	
+	var urlsplit = window.location.href.split('/');
+	var roomid = urlsplit[urlsplit.length - 1];
+	var pid;
+	
+	var socket = io();
+	function onDeleteRoom() {
+		console.log('delete this room!');
+	};
+	
+	var clicks = 0;
+	var oclicks = 0;
+	
+	if (document.cookie && readCookie('roomid') == roomid) {
+		pid = readCookie('pid');
+		socket.emit('auth', {'pid': pid, 'roomid': roomid});
+	/*
+		clicks = parseInt(readCookie('score'));
+		oclicks = parseInt(readCookie('oscore'));
+		document.getElementById("clicks").innerHTML = clicks;
+		document.getElementById("oclicks").innerHTML = oclicks;*/
+	}
+	else {
+		socket.emit('request-pid', roomid);
+	}
+	
+	socket.on('dangit', function(){}); //do stuff
+	
+	socket.on('authorized', function(){}); //do stuff
+	
+	socket.on('pid', function(newpid) {
+		pid = newpid;
+		document.cookie = 'pid=' + newpid + ' ; roomid=' + roomid; //add to this
+		document.cookie = 'roomid=' + roomid;
+	});
+	
   </script>
 
 </html>
