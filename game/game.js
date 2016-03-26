@@ -70,57 +70,56 @@ var buildings =
           base : 2100000000000000,
           power: 2900000000
         }
-    ];
-    
+    ];  
 var points = 0,
-    gross = 0;
-    freq = [];
+  gross = 0;
+  freq = [];
 for (var i = 0; i < buildings.length; i++) {
-    freq.push(0);
+  freq.push(0);
 }
 
 for (var i = 0; i < buildings.length; i++) {
-    $("#buildings").find('tbody')
-        .append($('<tr>')
-            .append($('<button>')
-                .attr('class', 'button')
-                .attr('onClick', 'buyBuilding(' + i.toString() + ')')
-                    .text("Buy " + buildings[i].name + "!")
-                )
-            );
+  $("#buildings").find('tbody')
+    .append($('<tr>')
+      .append($('<button>')
+        .attr('class', 'button')
+        .attr('onClick', 'buyBuilding(' + i.toString() + ')')
+          .text("Buy " + buildings[i].name + "!")
+        )
+      );
 }
 
 function single() {
-    ++points;
-    ++gross;
-    document.getElementById("counter").innerHTML = points;
-    document.getElementById("gCount").innerHTML = gross;
+  ++points;
+  ++gross;
+  document.getElementById("counter").innerHTML = points;
+  document.getElementById("gCount").innerHTML = gross;
 }
 
 function updatePoints() {
-    for (var i = 0; i < buildings.length; i++) {
-        points += buildings[i].power * freq[i];
-    }
-    document.getElementById("counter").innerHTML = points;
-    document.getElementById("gCount").innerHTML = gross;
+  for (var i = 0; i < buildings.length; i++) {
+    points += buildings[i].power * freq[i];
+  }
+  document.getElementById("counter").innerHTML = points;
+  document.getElementById("gCount").innerHTML = gross;
 }
 
 function buyBuilding(idx) {
-    var name = buildings[idx].name,
-        base = buildings[idx].base,
-        scale = buildings[idx].scale,
-        num = freq[idx];
-    var price = base * Math.pow(scale, num);
-    if (price <= points) {
-        ++freq[idx];
-        points -= price;
-        gross += price;
-        document.getElementById("counter").innerHTML = points;
-        document.getElementById(name + "Count").innerHTML = freq[idx];
-    }
+  var name = buildings[idx].name,
+    base = buildings[idx].base,
+    scale = buildings[idx].scale,
+    num = freq[idx];
+  var price = base * Math.pow(scale, num);
+  if (price <= points) {
+    ++freq[idx];
+    points -= price;
+    gross += price;
+    document.getElementById("counter").innerHTML = points;
+    document.getElementById(name + "Count").innerHTML = freq[idx];
+  }
 }
 
 window.setInterval(function(){
-    updatePoints()
-    console.log(points);
+  updatePoints()
+  console.log(points);
 }, 1000);
