@@ -1,5 +1,8 @@
 <style>
-
+body{
+  background: url(forestbgman.png) no-repeat;
+  background-size: 100%;
+}
 .buttons {
   display: inline-block;
   border-radius: 4px;

@@ -1,3 +1,9 @@
+body{
+    color: white;
+    font-family: "palatino linotype";
+  background: url(forestbgman.png) no-repeat;
+  background-size: 100%;
+}
 #part1 {
     width: 70%;
     text-align: center;
@@ -38,11 +44,22 @@
 }
 
 .tableHeader {
-    background-color: lightgray;
+    background: url(menutitle.jpg);
+    width: 60%;
+    height:140%;
+    border-radius: 5px;
+    border-color: brown;
     font-weight: 600;
     text-align: center;
-    padding: 5px;
+    padding: 2px;
     font-size: 1.2em;
+}
+#middle{
+background: url(menubackground.jpg);
+    border-radius: 20px;
+    border-color: brown;
+background-size:100%;
+
 }
 
 #upgrade {
