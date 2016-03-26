@@ -1,23 +1,55 @@
-<style>
-body{
- color: white;
-  background: url(forestbgman.png) no-repeat; 
-  background-size: 100%;
+h1 {
+  text-align: center;
+  font-weight: 500;
+  font-size: 2.3em;
+  font-family: "Palatino Linotype";
 }
+
+#main {
+  margin: 20px;
+}
+
+body{
+  color: white;
+  background: url(forestbgman2.png) no-repeat; 
+  background-size: 100%;
+  font-family: "Palatino Linotype";
+  font-size: 1.2em;
+}
+
+#points, #time {
+  width: 2em;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+/*  opacity: 0;
+*/  padding-bottom: -2px;
+  display: inline-block;
+}
+
+.label {
+  font-weight: bold;
+}
+
+#limit {
+  background-color: white;
+}
+
 .button {
+  font-family: serif;
   display: inline-block;
   border-radius: 4px;
   background-color: #f4511e;
   border: none;
   color: #FFFFFF;
   text-align: center;
-  font-size: 28px;
-  padding: 20px;
-  width: 200px;
+  font-size: 1.4em;
+  padding: 5px 10px 5px 10px;
   transition: all 0.5s;
   cursor: pointer;
-  margin: 5px;
+  margin: 5px 5px 5px 0px ;
 }
+
 .buttons {
   display: inline-block;
   border-radius: 4px;
@@ -162,4 +194,3 @@ body{
     background-color: #D3D3D3;
     color: white;
 }
-</style>

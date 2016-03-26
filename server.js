@@ -40,7 +40,7 @@ var pids = {},
     sockets = {},
     rooms = {};
 io.on('connection', function(socket) {
-  var id;
+  var id, grid = null, gpid = null;
   do {
     id = makeid();
   } while(sockets[id]);
@@ -53,7 +53,7 @@ io.on('connection', function(socket) {
     do {
       roomid = makeid();
     } while(rooms[roomid]);
-    rooms[roomid] = { pids: [], last: [0, 0], win: winlimit.win, 
+    rooms[roomid] = { pids: [], freq : [0, 0], last: [0, 0], win: winlimit.win, 
                       limit: winlimit.limit, end: false, start: false};
     console.log('room id is:' + roomid);
     socket.emit('made-room', roomid);
@@ -109,6 +109,28 @@ io.on('connection', function(socket) {
         {win : rooms[rid].win, 
          limit : rooms[rid].limit, 
          start: rooms[rid].start});
+
+      if (rooms[rid].pids.length > 0 && 
+      rooms[rid].pids[0] == pid) {
+        if (rooms[rid].freq[0] > 0) {
+          socket.emit('dangit');
+          return;
+        }
+        ++rooms[rid].freq[0];
+        grid = rid;
+        gpid = pid;
+      }
+      if (rooms[rid].pids.length > 1 && 
+      rooms[rid].pids[1] == pid) {
+        if (rooms[rid].freq[1] > 0) {
+          socket.emit('dangit');
+          return;
+        }
+        ++rooms[rid].freq[1];
+        grid = rid;
+        gpid = pid;
+      }
+
 			socket.join(rid);
       if (!rooms[rid].start && //hasn't already started
             io.sockets.adapter.rooms[rid].length == 2) { //two users in room
@@ -123,16 +145,6 @@ io.on('connection', function(socket) {
 			socket.emit('dangit');
 		}
 	});
-	
-	socket.on('new-pid', function() {
-		var pid;
-		do {
-			pid = makeid();
-		} while(pids[pid]);
-		pids[pid] = true;
-		socket.emit('pid');
-		socket.emit('authorized');
-	});
 
   socket.on('win', function(welp) {
     var rid = welp.roomid, pid = welp.pid;
@@ -143,6 +155,16 @@ io.on('connection', function(socket) {
   });
 	
   socket.on('disconnect', function() {
+    if (grid != null) {
+      if (rooms[grid].pids.length > 0 && 
+      rooms[grid].pids[0] == gpid) {
+        --rooms[grid].freq[0];
+      }
+      if (rooms[grid].pids.length > 1 && 
+      rooms[grid].pids[1] == gpid) {
+        --rooms[grid].freq[1];
+      }
+    }
     sockets[socket] = undefined;
     delete sockets[socket];
     console.log('user disconnected with id: ' + id);

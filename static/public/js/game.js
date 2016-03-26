@@ -1,16 +1,17 @@
 css = { 
   padding:        0, 
   margin:         0, 
-  width:          '30%', 
+  width:          '30%',
+  height:         '25%',  
   top:            '40%', 
   left:           '35%', 
   textAlign:      'center', 
   color:          '#000', 
-  border:         '3px solid #f4511e', 
+  border:         '3px solid #f4511e',
   backgroundColor:'#fff', 
   cursor:         'wait' 
 };
-$.blockUI({ message: '<h1>Waiting for opponent...</h1>', fadeOut: 0, css: css});
+$.blockUI({ message: '<h1>Waiting for opponent...</h1><textarea id="link" style="font-size:18px">'+window.location.href+'</textarea>', fadeOut: 0, css: css});
 
 var buildings = [
   { name : "Hacker", base : 15, power: .1 },
@@ -62,8 +63,8 @@ for (var i = 0; i < buildings.length; i++) {
 function single() {
   ++points;
   ++gross;
-  document.getElementById("points").innerHTML = points;
-  document.getElementById("gross").innerHTML = gross;
+  document.getElementById("points").innerHTML = Math.round(points);
+  document.getElementById("gross").innerHTML = Math.round(gross);
   checkPointsWin();
 }
 
@@ -74,8 +75,12 @@ function updatePoints() {
   }
   document.getElementById("points").innerHTML = points;
   document.getElementById("gross").innerHTML = gross;
+  document.getElementById("points").innerHTML = Math.round(points);
+  document.getElementById("gross").innerHTML = Math.round(gross);
   checkPointsWin();
 }
+
+var pics = ['/iron.png', '/fire.png', '/scarybush.png', '/gun.png', 'iron.png', 'big-iron.png', 'nic-cage.png'];
 
 function buyBuilding(idx) {
   var name = buildings[idx].name,
@@ -89,6 +94,12 @@ function buyBuilding(idx) {
     document.getElementById("points").innerHTML = points;
     document.getElementById("freq" + idx.toString()).innerHTML = freq[idx];
     document.getElementById("price" + idx.toString()).innerHTML = price * scale;
+		var x = document.createElement("IMG");
+		x.src = pics[idx];
+		x.style = "position: absolute; bottom: 10";
+		document.body.appendChild(x);  
+    $("img").animate({left: '120%'}, {duration: 15000});
+    document.getElementById("price" + idx.toString()).innerHTML = Math.round(price * scale);
   }
 }
 
@@ -108,8 +119,8 @@ function readCookie(name) {
 }
 
 function update() {
-  document.getElementById("gross").innerHTML = gross;
-  document.getElementById("ogross").innerHTML = ogross;
+  document.getElementById("gross").innerHTML = Math.round(gross);
+  document.getElementById("ogross").innerHTML = Math.round(ogross);
 }
 
 //globals
