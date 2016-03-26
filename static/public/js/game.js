@@ -1,4 +1,17 @@
-$.blockUI({ message: '<h1>Waiting for opponent...</h1>', fadeOut: 0});
+css = { 
+  padding:        0, 
+  margin:         0, 
+  width:          '30%', 
+  top:            '40%', 
+  left:           '35%', 
+  textAlign:      'center', 
+  color:          '#000', 
+  border:         '3px solid #f4511e', 
+  backgroundColor:'#fff', 
+  cursor:         'wait' 
+};
+$.blockUI({ message: '<h1>Waiting for opponent...</h1>', fadeOut: 0, css: css});
+
 var buildings = [
   { name : "Hacker", base : 15, power: .1 },
   { name : "Grandma", base : 100, power: 1 },
@@ -174,7 +187,7 @@ socket.on('start', function() {
   var timer = 5;
   (function t_minus() {
     $.blockUI({ fadeIn: 0, fadeOut: 0, 
-                message: '<h1>' + timer.toString() + '</h1>' });
+                message: '<h1>' + timer.toString() + '</h1>', css: css});
     --timer;
     if (timer >= 0) {
       setTimeout(function() {

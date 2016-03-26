@@ -7,10 +7,12 @@ var express = require('express'),
 // static content
 app.use('/', express.static('static/public/css'));
 app.use('/', express.static('static/public/html'));
+app.use('/', express.static('static/public/images'));
 app.use('/', express.static('static/public/js'));
 app.use('/game', express.static('static/public/css'));
 app.use('/game', express.static('static/public/html'));
 app.use('/game', express.static('static/public/js'));
+app.use('/game', express.static('static/public/images'));
 
 // handle rooms
 app.get('/game/:roomid', function(req, res) {

@@ -1,4 +1,5 @@
 var socket = io();
+//var rid = "";
 
 function onClick() {
   var win;
@@ -22,7 +23,10 @@ function onClick() {
 };
 
 socket.on('made-room', function(roomid) {
-  window.location.href = '/game/' + roomid;
+ // document.getElementById("textbox").value = '/game/' + roomid;
+ window.location.href = '/game/' + roomid;
+ // rid = '/game/' + roomid;
+  //console.log("gotrid");
 });
 
 function validatePointLimit() {
@@ -62,3 +66,5 @@ function validateTimeLimit() {
     return false;
   }
 }
+
+
