@@ -2,6 +2,7 @@
 body{
   background: url(forestbgman.png) no-repeat;
   background-size: cover;
+  background-position: left bottom;
 }
 .buttons {
   display: inline-block;

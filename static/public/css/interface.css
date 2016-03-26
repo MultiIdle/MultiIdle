@@ -1,8 +1,9 @@
 body{
     color: white;
     font-family: "palatino linotype";
-  background: url(forestbgman.png) no-repeat;
-  background-size: cover;
+    background: url(forestbgman.png) no-repeat;
+    background-size: cover;
+    background-position: left bottom;
 }
 #part1 {
     width: 70%;
