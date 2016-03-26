@@ -91,16 +91,13 @@ function buyBuilding(idx) {
     gross += price;
     document.getElementById("points").innerHTML = points;
     document.getElementById("freq" + idx.toString()).innerHTML = freq[idx];
-<<<<<<< HEAD
     document.getElementById("price" + idx.toString()).innerHTML = price * scale;
 		var x = document.createElement("IMG");
 		x.src = pics[idx];
 		x.style = "position: absolute; bottom: 10";
 		document.body.appendChild(x);  
     $("img").animate({left: '120%'}, {duration: 15000});
-=======
     document.getElementById("price" + idx.toString()).innerHTML = Math.round(price * scale);
->>>>>>> origin/master
   }
 }
 
