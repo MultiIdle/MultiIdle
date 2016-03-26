@@ -1,16 +1,17 @@
 css = { 
   padding:        0, 
   margin:         0, 
-  width:          '30%', 
+  width:          '30%',
+  height:         '25%',  
   top:            '40%', 
   left:           '35%', 
   textAlign:      'center', 
   color:          '#000', 
-  border:         '3px solid #f4511e', 
+  border:         '3px solid #f4511e',
   backgroundColor:'#fff', 
   cursor:         'wait' 
 };
-$.blockUI({ message: '<h1>Waiting for opponent...</h1>', fadeOut: 0, css: css});
+$.blockUI({ message: '<h1>Waiting for opponent...</h1><textarea id="link" style="font-size:18px">'+window.location.href+'</textarea>', fadeOut: 0, css: css});
 
 var buildings = [
   { name : "Hacker", base : 15, power: .1 },
