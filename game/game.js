@@ -1,6 +1,6 @@
 var buildings = [
-  { name : "Hacker", base : power: .1 },
-  { name : "Grandma", base :  power: 1 },
+  { name : "Hacker", base : 15, power: .1 },
+  { name : "Grandma", base : 100, power: 1 },
   { name : "Farm", base : 1100, power: 8 },
   { name : "Mine", base : 12000, power: 47 },
   { name : "Factory", base : 130000, power: 260 },
