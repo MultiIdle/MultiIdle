@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>Game</title>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+  </head>
+
+  <body>
+    <button type="button" onClick="onClick()">Create Game</button>
+  </body>
+
+
+
+  <script>
+    var socket = io();
+    function onClick(){
+      socket.emit('make-room');
+    };
+    socket.on('made-room', function() {
+      window.location.href = '/test.html';
+    });
+
+  </script>
+
+</html>

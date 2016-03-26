@@ -16,6 +16,7 @@ function makeid() {
 }
 
 var sockets = {};
+var rooms = {};
 io.on('connection', function(socket) {
   var id;
   do {
@@ -24,6 +25,14 @@ io.on('connection', function(socket) {
 
   console.log('user connected with id: ' + id);
 
+  socket.on('make-room', function() {
+    var roomid;
+    do {
+      roomid = makeid();
+    } while(rooms[roomid]);
+    console.log('room id is:' + roomid);
+    socket.emit('made-room', roomid);
+  });
   socket.on('score', function(score) {
     console.log(score);
     socket.broadcast.emit('score', score);
