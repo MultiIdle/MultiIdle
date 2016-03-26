@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>Button Incrementer</title>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+  </head>
+
+  <body>
+    <button type="button" onClick="onClick()">Click me</button>
+    <p>Clicks: <a id="clicks">0</a></p>
+    <p>Opponent: <a id="oclicks">0</a></p>
+  </body>
+
+  <script>
+    var socket = io();
+    var clicks = 0;
+    function onClick() {
+      clicks += 1;
+      socket.emit('score', clicks);
+      document.getElementById("clicks").innerHTML = clicks;
+    };
+    socket.on('score', function(oclicks) {
+      document.getElementById("oclicks").innerHTML = oclicks;
+    });
+  </script>
+
+  <script>
+
+  </script>
+
+</html>
