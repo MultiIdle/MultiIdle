@@ -4,14 +4,19 @@ var express = require('express'),
     io = require('socket.io').listen(server),
     path = require('path');
 
-app.use('/', express.static('static/public'));
+// static content
+app.use('/', express.static('static/public/css'));
+app.use('/', express.static('static/public/html'));
+app.use('/', express.static('static/public/js'));
+app.use('/game', express.static('static/public/css'));
+app.use('/game', express.static('static/public/html'));
+app.use('/game', express.static('static/public/js'));
 
-app.use('/game', express.static('static/public'));
-
+// handle rooms
 app.get('/game/:roomid', function(req, res) {
   var roomid = req.params.roomid;
   if (rooms[roomid]) { // room exists
-    res.sendFile(path.join(__dirname + '/static/public/game.html'));
+    res.sendFile(path.join(__dirname + '/static/public/html/game.html'));
   } else {
     res.writeHead(500, {'content-type': 'text/plain'});
     res.end('Room does not exist!');
@@ -28,9 +33,9 @@ function makeid() {
     return text;
 }
 
-var pids = {};
-sockets = {};
-rooms = {};
+var pids = {},
+    sockets = {},
+    rooms = {};
 io.on('connection', function(socket) {
   var id;
   do {
@@ -49,6 +54,7 @@ io.on('connection', function(socket) {
     console.log('room id is:' + roomid);
     socket.emit('made-room', roomid);
   });
+
   socket.on('score', function(welp) {
     //console.log('user ' + id + ' has a score of ' + welp.score);
     socket.broadcast.to(welp.roomid).emit('score', welp.score);
@@ -65,8 +71,7 @@ io.on('connection', function(socket) {
 			rooms[roomid].pids.push(pid);
 			console.log(pid + ' has joined room ' + roomid);
 			socket.join(roomid);
-		}
-		else {
+		} else {
 			console.log('dangit: room is full');
 			socket.emit('dangit');
 		}
@@ -79,8 +84,7 @@ io.on('connection', function(socket) {
 			rooms[welp.roomid].pids[1] == welp.pid)) {
 			socket.emit('authorized');
 			socket.join(welp.roomid);
-			}
-		else {
+		} else {
 			console.log('dangit: cookie failure');
 			console.log(rooms[welp.roomid]);
 			console.log(welp);
@@ -105,7 +109,7 @@ io.on('connection', function(socket) {
   });
 });
 
-server.listen(4200, function(){
+server.listen(4200, function() {
   console.log('listening on *: 4200');
 });
 
