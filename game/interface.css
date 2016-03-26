@@ -18,7 +18,7 @@
     font-size: 1.2em
 }
 
-#right {
+#middle {
     float: right;
     width: 30%;
 }
@@ -26,6 +26,10 @@
 #left {
     width: 70%;
     float: left;
+}
+
+#right {
+    width: 100%;
 }
 
 .headings {
@@ -52,10 +56,7 @@
     padding: 7px;
     font-size: .8em;
     background-color: #CFD2CD;
-<<<<<<< HEAD
-=======
     text-align: center;
->>>>>>> origin/master
     float: left;
     border-radius: 5px;
     font-family: serif;
