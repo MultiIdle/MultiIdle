@@ -21,6 +21,7 @@
     socket.on('score', function(oclicks) {
       document.getElementById("oclicks").innerHTML = oclicks;
     });
+	setInterval(function() { socket.emit('score', clicks); }, 500);
   </script>
 
   <script>

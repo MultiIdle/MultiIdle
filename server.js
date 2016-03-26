@@ -25,7 +25,7 @@ io.on('connection', function(socket) {
   console.log('user connected with id: ' + id);
 
   socket.on('score', function(score) {
-    console.log(score);
+    console.log('user ' + id + ' has a score of ' + score);
     socket.broadcast.emit('score', score);
   });
 
