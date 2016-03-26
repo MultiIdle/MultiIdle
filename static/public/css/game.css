@@ -1,7 +1,7 @@
 <style>
 body{
   background: url(forestbgman.png) no-repeat;
-  background-size: 100%;
+  background-size: cover;
 }
 .buttons {
   display: inline-block;

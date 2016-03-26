@@ -5,7 +5,7 @@ css = {
   height:         '25%',  
   top:            '40%', 
   left:           '35%', 
-  textAlign:      'center', 
+  textAlign:      'center',
   color:          '#000', 
   border:         '3px solid #f4511e',
   backgroundColor:'#fff', 

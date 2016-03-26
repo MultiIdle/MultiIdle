@@ -2,7 +2,7 @@ body{
     color: white;
     font-family: "palatino linotype";
   background: url(forestbgman.png) no-repeat;
-  background-size: 100%;
+  background-size: cover;
 }
 #part1 {
     width: 70%;
