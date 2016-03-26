@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>MultiIdle</title>
+    <title>Man vs. Wild</title>
     <link rel="stylesheet" type="text/css" href="interface.css" />
     <link rel="stylesheet" href="game.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -10,15 +10,11 @@
 
   <body>
     <div id="main">
-      <h2>MultiIdle</h2>
-      <h3>Win Condition: <span id="win"></span></h3>
+      <h3 id="bigScript">Man vs. Wild</h3>
+      <h3 id="win">Win Condition: <span id="win"></span></h3>
       <h3>Win Limit: <span id="limit"></span></h3>
-      <div id="part1">
       <div id="left">
-          <input type="image" id="generator" src="http://www.americanmethod.com/assets/images/items/ROUND_Vote_Trump_16_sticker.jpg" onclick="single()"></input>
-          <br/>
-          <br/>
-          <span class="pointsPerSec"><span id = "pps">0</span> votes per second</span>
+          <input type="image" id="generator" src="hammer.png" onclick="single()"></input>
           <br/>
           <br/>
           <span class="count">Number of votes:
@@ -33,15 +29,12 @@
 
           <br/>
           <br/>
-          <span class="grossCount">Opponent Gross votes: 
+          <span class="grossCount">Opponent gross votes: 
           <span id="ogross">0</span></span>
           <br>
-          <button class="button" onClick="selectForDemolition()">BOOM</button>
-          <button class="button" onClick="raid(.5)">RAID</button>
-          <button class="button" onClick="doubleAgent(5000)">DOUBLE AGENT</button>
       </div>
 
-      <div id="middle">
+      <div id="right">
         <table style="width:100%" id="buildings">
           <thead>
             <tr>
@@ -57,7 +50,6 @@
           </tbody>
         </table>
       </div>
-    </div>
 
     </div>
   </body>
