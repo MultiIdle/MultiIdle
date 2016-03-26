@@ -17,6 +17,9 @@
           <input type="image" id="generator" src="hammer.png" onclick="single()"></input>
           <br/>
           <br/>
+          <span class="pointsPerSec"><span id = "pps">0</span> points per second</span>
+          <br/>
+          <br/>
           <span class="count">Number of points:
           <span id="points">0</span>
           </span>
@@ -32,6 +35,10 @@
           <span class="grossCount">Opponent gross points: 
           <span id="ogross">0</span></span>
           <br>
+
+          <button class="button" onClick="selectForDemolition()">BOOM</button>
+          <button class="button" onClick="raid(.5)">RAID</button>
+          <button class="button" onClick="doubleAgent(5000)">DOUBLE AGENT</button>
       </div>
 
       <div id="right">

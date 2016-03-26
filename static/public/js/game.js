@@ -108,7 +108,7 @@ function buyBuilding(idx, factor) {
     document.getElementById("freq" + idx.toString()).innerHTML = freq[idx];
     document.getElementById("price" + idx.toString()).innerHTML = price * scale;
     document.getElementById("pps").innerHTML = pps;
-      var x = document.createElement("IMG");
+    var x = document.createElement("img");
 		x.src = pics[idx];
 		x.style = "position: absolute; bottom: 10";
 		document.body.appendChild(x);  
