@@ -1,3 +1,18 @@
+css = { 
+  padding:        0, 
+  margin:         0, 
+  width:          '30%',
+  height:         '25%',  
+  top:            '40%', 
+  left:           '35%', 
+  textAlign:      'center', 
+  color:          '#000', 
+  border:         '3px solid #f4511e',
+  backgroundColor:'#fff', 
+  cursor:         'wait' 
+};
+$.blockUI({ message: '<h1>Waiting for opponent...</h1><textarea id="link" style="font-size:18px">'+window.location.href+'</textarea>', fadeOut: 0, css: css});
+
 var buildings = [
   { name : "Hacker", base : 15, power: .1 },
   { name : "Grandma", base : 100, power: 1 },
@@ -57,8 +72,9 @@ for (var i = 0; i < buildings.length; i++) {
 function single() {
   ++points;
   ++gross;
-  document.getElementById("points").innerHTML = points;
-  document.getElementById("gross").innerHTML = gross;
+  document.getElementById("points").innerHTML = Math.round(points);
+  document.getElementById("gross").innerHTML = Math.round(gross);
+  checkPointsWin();
 }
 
 function updatePoints() {
@@ -69,12 +85,14 @@ function updatePoints() {
   }
   document.getElementById("points").innerHTML = points;
   document.getElementById("gross").innerHTML = gross;
+  document.getElementById("points").innerHTML = Math.round(points);
+  document.getElementById("gross").innerHTML = Math.round(gross);
+  checkPointsWin();
 }
 
-
-
 function buyBuilding(idx, factor) {
-  var name = buildings[idx].name,
+    var pics = ['/iron.png', '/fire.png', '/scarybush.png', '/gun.png', 'iron.png', 'big-iron.png', 'nic-cage.png'];
+    var name = buildings[idx].name,
     base = buildings[idx].base,
     num = freq[idx];
     
@@ -89,9 +107,15 @@ function buyBuilding(idx, factor) {
     document.getElementById("freq" + idx.toString()).innerHTML = freq[idx];
     document.getElementById("price" + idx.toString()).innerHTML = price * scale;
     document.getElementById("pps").innerHTML = pps;
+      var x = document.createElement("IMG");
+		x.src = pics[idx];
+		x.style = "position: absolute; bottom: 10";
+		document.body.appendChild(x);  
+    $("img").animate({left: '120%'}, {duration: 15000});
+    document.getElementById("price" + idx.toString()).innerHTML = Math.round(price * scale);
   }
 }
-
+    
 var demolitionNumber = consumables[0].numberOf,
     demolitionPrice = consumables[0].initial * Math.pow(consumables[0].scaleC, demolitionNumber),
     raidNumber = consumables[1].numberOf,
@@ -100,9 +124,11 @@ var demolitionNumber = consumables[0].numberOf,
     doubleAgentPrice = consumables[2].initial * Math.pow(consumables[2].scaleC, doubleAgentNumber);
 
 function selectForDemolition(){
+    console.log(demolitionPrice);
     if (ownedBuildings > 0 && points >= demolitionPrice){
         points -= demolitionPrice;
         ++demolitionNumber;
+        demolitionPrice = consumables[0].initial * Math.pow(consumables[0].scaleC, demolitionNumber);
         document.getElementById("points").innerHTML = points;
         var buildingNo = Math.floor(1 +(Math.random() * (ownedBuildings-1)));
         console.log(buildingNo);
@@ -114,7 +140,7 @@ function selectForDemolition(){
             }
         }
     }
-}
+}		
 
 function destroyBuilding(index){
     base = buildings[index].base;
@@ -134,6 +160,7 @@ function raid(factor){
     if (points >= raidPrice){
         points -= raidPrice;
         ++raidNumber;
+        raidPrice = consumables[1].initial * Math.pow(consumables[1].scaleC, raidNumber);
         var difference =points * factor;
         points -= difference;
         gross -= difference;
@@ -148,6 +175,7 @@ function doubleAgent(time){
     if (points >= doubleAgentPrice){
         points -= doubleAgentPrice;
         ++doubleAgentNumber;
+        doubleAgentPrice = consumables[2].initial * Math.pow(consumables[2].scaleC, doubleAgentNumber);
         flip = -flip;
         console.log(flip);
         window.setTimeout(function(){
@@ -166,13 +194,20 @@ var urlsplit = window.location.href.split('/');
 var roomid = urlsplit[urlsplit.length - 1];
 
 var pid;
+function update() {
+  document.getElementById("gross").innerHTML = Math.round(gross);
+  document.getElementById("ogross").innerHTML = Math.round(ogross);
+}
+
+//globals
+var urlsplit = window.location.href.split('/'),
+    roomid = urlsplit[urlsplit.length - 1],
+    pid,
+    win,
+    limit,
+    origlimit;
 
 var socket = io();
-//socket.join(roomid);
-
-function onDeleteRoom() {
-  console.log('delete this room!');
-};
 
 function readCookie(name) {
 		var nameEQ = name + "=";
@@ -188,8 +223,12 @@ function readCookie(name) {
 if (document.cookie && readCookie('roomid') == roomid) {
   pid = readCookie('pid');
   socket.emit('auth', {'pid': pid, 'roomid': roomid});
-  gross = parseInt(readCookie('score'));
-  ogross = parseInt(readCookie('oscore'));
+  points = parseFloat(readCookie('points'));
+  gross = parseFloat(readCookie('score'));
+  ogross = parseFloat(readCookie('oscore'));
+  win = readCookie('win');
+  limit = parseFloat(readCookie('limit'));
+  origlimit = limit;
   update();
 } else {
   socket.emit('request-pid', roomid);
@@ -197,11 +236,33 @@ if (document.cookie && readCookie('roomid') == roomid) {
 
 socket.on('dangit', function() { window.location.href = '/';}); //do stuff
 
-socket.on('authorized', function(){}); //do stuff
+socket.on('authorized', function(obj) {
+  win = obj.win;
+  document.cookie = 'win=' + win;
+  document.getElementById("win").innerHTML = win;
+  origlimit = obj.limit;
+  if (win == 'points') {
+    limit = obj.limit;
+    document.cookie = 'limit=' + limit.toString();
+  } else {
+    if (readCookie('limit') != limit) {
+      limit = origlimit;
+    }
+  }
+  document.getElementById("limit").innerHTML = limit;
+  if (obj.start) {
+    $.unblockUI({ fadeOut: 0 });
+  }
+}); //do stuff
 
-socket.on('score', function(oscore){
-  ogross = oscore;
+socket.on('score', function(obj) {
+  ogross = obj.score;
   update();
+  if (win == 'time') {
+    var elap = obj.elap / 1000.0;
+    limit = Math.ceil(origlimit - elap);
+    document.getElementById("limit").innerHTML = limit;
+  }
 });
 
 socket.on('pid', function(newpid) {
@@ -210,12 +271,51 @@ socket.on('pid', function(newpid) {
   document.cookie = 'roomid=' + roomid;
   document.cookie = 'score=' + gross;
   document.cookie = 'oscore=' + ogross;
+  socket.emit('auth', {'pid': pid, 'roomid': roomid});
 });
 
 window.setInterval(function() {
-  socket.emit('score', {'score' : gross, 'roomid' : roomid});
+  socket.emit('score', {'score' : gross, 'roomid' : roomid, 'pid' : pid});
 }, 500);
 window.setInterval(function() {
+  document.cookie= 'points=' + points;
   document.cookie= 'score=' + gross;
   document.cookie="oscore=" + ogross;
 }, 1000);
+
+function checkPointsWin() {
+  if (win == 'points') {
+    if (points >= limit) {
+      socket.emit('win', {'pid' : pid, 'roomid' : roomid});
+    }
+  }
+}
+
+socket.on('winner', function(winpid) {
+  if (win == 'time') {
+    limit = 0;
+    document.getElementById("limit").innerHTML = 0;
+  }
+  if (pid == winpid) {
+    alert('You won! Congratulations!');
+  } else {
+    alert('You lost. Your ancestors are ashamed of you...');
+  }
+  socket.disconnect();
+});
+
+socket.on('start', function() {
+  var timer = 5;
+  (function t_minus() {
+    $.blockUI({ fadeIn: 0, fadeOut: 0, 
+                message: '<h1>' + timer.toString() + '</h1>', css: css});
+    --timer;
+    if (timer >= 0) {
+      setTimeout(function() {
+        t_minus();
+      }, 1000);
+    } else {
+      $.unblockUI({ fadeOut: 0 }); 
+    }
+  }());
+});

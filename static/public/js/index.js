@@ -1,23 +1,32 @@
 var socket = io();
+//var rid = "";
 
 function onClick() {
+  var win;
   if (document.getElementById('points').checked) {
     if (!validatePointLimit()) {
       return;
     }
+    win = 'points';
   } else if (document.getElementById('time').checked) {
     if (!validateTimeLimit()) {
       return;
     }
+    win = 'time';
   } else {
     alert("Please choose win condition.");
     return;
   }
-  socket.emit('make-room');
+
+  var n = parseFloat(document.getElementById('limit').value);
+  socket.emit('make-room', {'win' : win, 'limit' : n});
 };
 
 socket.on('made-room', function(roomid) {
-  window.location.href = '/game/' + roomid;
+ // document.getElementById("textbox").value = '/game/' + roomid;
+ window.location.href = '/game/' + roomid;
+ // rid = '/game/' + roomid;
+  //console.log("gotrid");
 });
 
 function validatePointLimit() {
@@ -57,3 +66,5 @@ function validateTimeLimit() {
     return false;
   }
 }
+
+

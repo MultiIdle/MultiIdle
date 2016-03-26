@@ -2,13 +2,17 @@
   <head>
     <title>MultiIdle</title>
     <link rel="stylesheet" type="text/css" href="interface.css" />
+        <link rel="stylesheet" href="game.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
   </head>
 
   <body>
     <div id="main">
       <h2>MultiIdle</h2>
+      <h3>Win Condition: <span id="win"></span></h3>
+      <h3>Win Limit: <span id="limit"></span></h3>
       <div id="part1">
       <div id="left">
           <input type="image" id="generator" src="http://www.americanmethod.com/assets/images/items/ROUND_Vote_Trump_16_sticker.jpg" onclick="single()"></input>
@@ -41,7 +45,7 @@
         <table style="width:100%" id="buildings">
           <thead>
             <tr>
-              <td class="tableHeader" colspan="3">AutoClickers</td>
+              <td class="tableHeader" colspan="3">Buildings</td>
             </tr>
             <tr>
               <td>Frequency</td>
@@ -55,9 +59,6 @@
       </div>
     </div>
 
-    <div id="part2">
-      <h2>Opponent</h2>
-    </div>
     </div>
   </body>
 

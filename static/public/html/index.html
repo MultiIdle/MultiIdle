@@ -1,19 +1,49 @@
 <html>
   <head>
-    <title>Multi-Idle</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <title>Man vs. Wild</title>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
   </head>
 
   <body>
-    Win Condition:
+
+    <div id="main">
+
+    <h1> Man vs. Wild </h1>
+    <p id="description"></p>
+    <p class="label">Win Condition:</p>
     <form action="">
       <input type="radio" name="win-condition" id="points">Points<br>
       <input type="radio" name="win-condition" id="time">Time<br>
     </form>
-    Limit (seconds or points) : <input type="text" id="limit"></input>
+    <span class="label">Limit</span> (seconds or points) : <input type="text" id="limit"></input>
     <br>
     <br>
-    <button type="button" onClick="onClick()">Create Game</button>
+
+
+<button class="button" onClick="onClick()"style="vertical-align:middle"><span>Play </span></button>
+
+
+
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <br><br><br>
+    </div>
+    <div class="modal-body">
+      <p>Send this link to your opponent:</p>
+      <input type="text" id="textbox" style="font-size: 24px;" readonly><br><br>
+    </div>
+    <div class="modal-footer">
+      <button class="buttons" style="vertical-align:middle" onClick="onClick()"><span>Start </span></button>
+    </div>
+  </div>
+
+</div>
+
+
+  </div>
+
   </body>
 
   <script src="index.js"></script>

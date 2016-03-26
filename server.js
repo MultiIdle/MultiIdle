@@ -2,15 +2,18 @@ var express = require('express'),
     app = express(),
     server = require('http').Server(app),
     io = require('socket.io').listen(server),
-    path = require('path');
+    path = require('path'),
+    now = require("performance-now");
 
 // static content
 app.use('/', express.static('static/public/css'));
 app.use('/', express.static('static/public/html'));
+app.use('/', express.static('static/public/images'));
 app.use('/', express.static('static/public/js'));
 app.use('/game', express.static('static/public/css'));
 app.use('/game', express.static('static/public/html'));
 app.use('/game', express.static('static/public/js'));
+app.use('/game', express.static('static/public/images'));
 
 // handle rooms
 app.get('/game/:roomid', function(req, res) {
@@ -37,7 +40,7 @@ var pids = {},
     sockets = {},
     rooms = {};
 io.on('connection', function(socket) {
-  var id;
+  var id, grid = null, gpid = null;
   do {
     id = makeid();
   } while(sockets[id]);
@@ -45,19 +48,37 @@ io.on('connection', function(socket) {
 
   console.log('user connected with id: ' + id);
 
-  socket.on('make-room', function() {
+  socket.on('make-room', function(winlimit) {
     var roomid;
     do {
       roomid = makeid();
     } while(rooms[roomid]);
-    rooms[roomid] = { pids: [] };
+    rooms[roomid] = { pids: [], freq : [0, 0], last: [0, 0], win: winlimit.win, 
+                      limit: winlimit.limit, end: false, start: false};
     console.log('room id is:' + roomid);
     socket.emit('made-room', roomid);
   });
 
   socket.on('score', function(welp) {
-    //console.log('user ' + id + ' has a score of ' + welp.score);
-    socket.broadcast.to(welp.roomid).emit('score', welp.score);
+    var rid = welp.roomid, pid = welp.pid, scr = welp.score;
+    var elap = 0;
+    if (rooms[rid].win == 'time') {
+      if (pid == rooms[rid].pids[0]) {
+        rooms[rid].last[0] = scr;
+      } else {
+        rooms[rid].last[1] = scr;
+      }
+      elap = now() - rooms[rid].tbeg;
+      if (1000 * rooms[rid].limit <= elap) {
+        if (rooms[rid].last[0] > rooms[rid].last[1]) {
+          io.to(rid).emit('winner', rooms[rid].pids[0]);
+        } else {
+          io.to(rid).emit('winner', rooms[rid].pids[1]);
+        }
+      }
+    }
+    socket.broadcast.to(rid).emit('score', 
+      {score: welp.score, elap: elap});
   });
 	
 	socket.on('request-pid', function(roomid) {
@@ -78,31 +99,72 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('auth', function(welp) {
-		if ((rooms[welp.roomid].pids.length > 0 && 
-			rooms[welp.roomid].pids[0] == welp.pid) ||
-			(rooms[welp.roomid].pids.length > 1 && 
-			rooms[welp.roomid].pids[1] == welp.pid)) {
-			socket.emit('authorized');
-			socket.join(welp.roomid);
+    var rid = welp.roomid, pid = welp.pid;
+    console.log("authentication " + rid + " " + pid);
+		if ((rooms[rid].pids.length > 0 && 
+			rooms[rid].pids[0] == pid) ||
+			(rooms[rid].pids.length > 1 && 
+			rooms[rid].pids[1] == pid)) {
+			socket.emit('authorized', 
+        {win : rooms[rid].win, 
+         limit : rooms[rid].limit, 
+         start: rooms[rid].start});
+
+      if (rooms[rid].pids.length > 0 && 
+      rooms[rid].pids[0] == pid) {
+        if (rooms[rid].freq[0] > 0) {
+          socket.emit('dangit');
+          return;
+        }
+        ++rooms[rid].freq[0];
+        grid = rid;
+        gpid = pid;
+      }
+      if (rooms[rid].pids.length > 1 && 
+      rooms[rid].pids[1] == pid) {
+        if (rooms[rid].freq[1] > 0) {
+          socket.emit('dangit');
+          return;
+        }
+        ++rooms[rid].freq[1];
+        grid = rid;
+        gpid = pid;
+      }
+
+			socket.join(rid);
+      if (!rooms[rid].start && //hasn't already started
+            io.sockets.adapter.rooms[rid].length == 2) { //two users in room
+        rooms[rid].start = true;
+        rooms[rid].tbeg = now() + 5000;
+        io.to(rid).emit('start');
+      }
 		} else {
 			console.log('dangit: cookie failure');
-			console.log(rooms[welp.roomid]);
+			console.log(rooms[rid]);
 			console.log(welp);
 			socket.emit('dangit');
 		}
 	});
-	
-	socket.on('new-pid', function() {
-		var pid;
-		do {
-			pid = makeid();
-		} while(pids[pid]);
-		pids[pid] = true;
-		socket.emit('pid', pid);
-		socket.emit('authorized');
-	});
+
+  socket.on('win', function(welp) {
+    var rid = welp.roomid, pid = welp.pid;
+    if (!rooms[rid].end) {
+      rooms[rid].end = true;
+      io.to(rid).emit('winner', pid);
+    }
+  });
 	
   socket.on('disconnect', function() {
+    if (grid != null) {
+      if (rooms[grid].pids.length > 0 && 
+      rooms[grid].pids[0] == gpid) {
+        --rooms[grid].freq[0];
+      }
+      if (rooms[grid].pids.length > 1 && 
+      rooms[grid].pids[1] == gpid) {
+        --rooms[grid].freq[1];
+      }
+    }
     sockets[socket] = undefined;
     delete sockets[socket];
     console.log('user disconnected with id: ' + id);
