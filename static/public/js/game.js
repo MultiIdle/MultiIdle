@@ -62,8 +62,8 @@ for (var i = 0; i < buildings.length; i++) {
 function single() {
   ++points;
   ++gross;
-  document.getElementById("points").innerHTML = points;
-  document.getElementById("gross").innerHTML = gross;
+  document.getElementById("points").innerHTML = Math.round(points);
+  document.getElementById("gross").innerHTML = Math.round(gross);
   checkWin();
 }
 
@@ -72,8 +72,8 @@ function updatePoints() {
     points += buildings[i].power * freq[i];
     gross += buildings[i].power * freq[i];
   }
-  document.getElementById("points").innerHTML = points;
-  document.getElementById("gross").innerHTML = gross;
+  document.getElementById("points").innerHTML = Math.round(points);
+  document.getElementById("gross").innerHTML = Math.round(gross);
   checkWin();
 }
 
@@ -88,7 +88,7 @@ function buyBuilding(idx) {
     gross += price;
     document.getElementById("points").innerHTML = points;
     document.getElementById("freq" + idx.toString()).innerHTML = freq[idx];
-    document.getElementById("price" + idx.toString()).innerHTML = price * scale;
+    document.getElementById("price" + idx.toString()).innerHTML = Math.round(price * scale);
   }
 }
 
@@ -108,8 +108,8 @@ function readCookie(name) {
 }
 
 function update() {
-  document.getElementById("gross").innerHTML = gross;
-  document.getElementById("ogross").innerHTML = ogross;
+  document.getElementById("gross").innerHTML = Math.round(gross);
+  document.getElementById("ogross").innerHTML = Math.round(ogross);
 }
 
 //globals
