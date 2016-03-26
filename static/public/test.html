@@ -11,8 +11,31 @@
   </body>
 
   <script>
-    var socket = io();
+	//sorry about spacing
+	 function readCookie(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		}
+		return null;
+	}
+	
     var clicks = 0;
+	var oclicks = 0;
+	
+	if (document.cookie) {
+		clicks = parseInt(readCookie('score'));
+		oclicks = parseInt(readCookie('oscore'));
+		document.getElementById("clicks").innerHTML = clicks;
+		document.getElementById("oclicks").innerHTML = oclicks;
+	}
+	
+	var socket = io();
+	
+	
     function onClick() {
       clicks += 1;
       socket.emit('score', clicks);
@@ -22,6 +45,9 @@
       document.getElementById("oclicks").innerHTML = oclicks;
     });
 	setInterval(function() { socket.emit('score', clicks); }, 500);
+	setInterval(function() { document.cookie= 'score=' + clicks + "; oscore=" + oclicks;}, 1000);
+
+	
   </script>
 
   <script>
