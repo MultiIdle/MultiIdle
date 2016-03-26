@@ -45,7 +45,9 @@ io.on('connection', function(socket) {
 
   console.log('user connected with id: ' + id);
 
-  socket.on('make-room', function() {
+  socket.on('make-room', function(winlimit) {
+    console.log(winlimit.win);
+    console.log(winlimit.limit);
     var roomid;
     do {
       roomid = makeid();
