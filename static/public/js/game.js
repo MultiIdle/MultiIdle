@@ -77,6 +77,8 @@ function updatePoints() {
   checkWin();
 }
 
+var pics = ['/iron.png', '/fire.png', '/scarybush.png', '/gun.png', 'iron.png', 'big-iron.png', 'nic-cage.png'];
+
 function buyBuilding(idx) {
   var name = buildings[idx].name,
     base = buildings[idx].base,
@@ -89,6 +91,11 @@ function buyBuilding(idx) {
     document.getElementById("points").innerHTML = points;
     document.getElementById("freq" + idx.toString()).innerHTML = freq[idx];
     document.getElementById("price" + idx.toString()).innerHTML = price * scale;
+		var x = document.createElement("IMG");
+		x.src = pics[idx];
+		x.style = "position: absolute; bottom: 10";
+		document.body.appendChild(x);  
+    $("img").animate({left: '120%'}, {duration: 15000});
   }
 }
 
