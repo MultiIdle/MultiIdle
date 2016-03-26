@@ -5,6 +5,8 @@ var io = require('socket.io').listen(server);
 
 app.use('/', express.static('static/public'));
 
+app.use('/game', require('./routes/game/game'));
+
 function makeid() {
     var possible = 
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -15,13 +17,14 @@ function makeid() {
     return text;
 }
 
-var sockets = {};
-var rooms = {};
+sockets = {};
+rooms = {};
 io.on('connection', function(socket) {
   var id;
   do {
     id = makeid();
   } while(sockets[id]);
+  sockets[id] = 'present';
 
   console.log('user connected with id: ' + id);
 
@@ -30,6 +33,7 @@ io.on('connection', function(socket) {
     do {
       roomid = makeid();
     } while(rooms[roomid]);
+    rooms[roomid] = true;
     console.log('room id is:' + roomid);
     socket.emit('made-room', roomid);
   });
@@ -48,3 +52,5 @@ io.on('connection', function(socket) {
 server.listen(4200, function(){
   console.log('listening on *: 4200');
 });
+
+module.exports = app;

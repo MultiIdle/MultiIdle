@@ -15,8 +15,8 @@
     function onClick(){
       socket.emit('make-room');
     };
-    socket.on('made-room', function() {
-      window.location.href = '/test.html';
+    socket.on('made-room', function(roomid) {
+      window.location.href = '/game/' + roomid;
     });
 
   </script>
