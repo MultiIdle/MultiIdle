@@ -1,6 +1,7 @@
-<style>
+﻿<style>
 body{
-  background: url(forestbgman.png) no-repeat;
+  background: url(forestbgman2.png) no-repeat;
+  z-index: 201;
   background-size: 100%;
 }
 .buttons {

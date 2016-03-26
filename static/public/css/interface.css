@@ -1,7 +1,7 @@
 body{
     color: white;
     font-family: "palatino linotype";
-  background: url(forestbgman.png) no-repeat;
+  background: url(forestbgman2.png) no-repeat;
   background-size: 100%;
 }
 #part1 {
@@ -53,6 +53,7 @@ body{
     text-align: center;
     padding: 2px;
     font-size: 1.2em;
+	z-index:2;
 }
 #middle{
 background: url(menubackground.jpg);
