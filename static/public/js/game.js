@@ -64,7 +64,7 @@ function single() {
   ++gross;
   document.getElementById("points").innerHTML = points;
   document.getElementById("gross").innerHTML = gross;
-  checkWin();
+  checkPointsWin();
 }
 
 function updatePoints() {
@@ -74,7 +74,7 @@ function updatePoints() {
   }
   document.getElementById("points").innerHTML = points;
   document.getElementById("gross").innerHTML = gross;
-  checkWin();
+  checkPointsWin();
 }
 
 function buyBuilding(idx) {
@@ -117,17 +117,20 @@ var urlsplit = window.location.href.split('/'),
     roomid = urlsplit[urlsplit.length - 1],
     pid,
     win,
-    limit;
+    limit,
+    origlimit;
 
 var socket = io();
 
 if (document.cookie && readCookie('roomid') == roomid) {
   pid = readCookie('pid');
   socket.emit('auth', {'pid': pid, 'roomid': roomid});
-  gross = parseInt(readCookie('score'));
-  ogross = parseInt(readCookie('oscore'));
+  points = parseFloat(readCookie('points'));
+  gross = parseFloat(readCookie('score'));
+  ogross = parseFloat(readCookie('oscore'));
   win = readCookie('win');
   limit = parseFloat(readCookie('limit'));
+  origlimit = limit;
   update();
 } else {
   socket.emit('request-pid', roomid);
@@ -138,13 +141,30 @@ socket.on('dangit', function() { window.location.href = '/';}); //do stuff
 socket.on('authorized', function(obj) {
   win = obj.win;
   document.cookie = 'win=' + win;
-  limit = obj.limit;
-  document.cookie = 'limit=' + limit.toString();
+  document.getElementById("win").innerHTML = win;
+  origlimit = obj.limit;
+  if (win == 'points') {
+    limit = obj.limit;
+    document.cookie = 'limit=' + limit.toString();
+  } else {
+    if (readCookie('limit') != limit) {
+      limit = origlimit;
+    }
+  }
+  document.getElementById("limit").innerHTML = limit;
+  if (obj.start) {
+    $.unblockUI({ fadeOut: 0 });
+  }
 }); //do stuff
 
-socket.on('score', function(oscore) {
-  ogross = oscore;
+socket.on('score', function(obj) {
+  ogross = obj.score;
   update();
+  if (win == 'time') {
+    var elap = obj.elap / 1000.0;
+    limit = Math.ceil(origlimit - elap);
+    document.getElementById("limit").innerHTML = limit;
+  }
 });
 
 socket.on('pid', function(newpid) {
@@ -157,24 +177,27 @@ socket.on('pid', function(newpid) {
 });
 
 window.setInterval(function() {
-  socket.emit('score', {'score' : gross, 'roomid' : roomid});
+  socket.emit('score', {'score' : gross, 'roomid' : roomid, 'pid' : pid});
 }, 500);
 window.setInterval(function() {
+  document.cookie= 'points=' + points;
   document.cookie= 'score=' + gross;
   document.cookie="oscore=" + ogross;
 }, 1000);
 
-function checkWin() {
+function checkPointsWin() {
   if (win == 'points') {
     if (points >= limit) {
       socket.emit('win', {'pid' : pid, 'roomid' : roomid});
     }
-  } else {
-
   }
 }
 
 socket.on('winner', function(winpid) {
+  if (win == 'time') {
+    limit = 0;
+    document.getElementById("limit").innerHTML = 0;
+  }
   if (pid == winpid) {
     alert('You won! Congratulations!');
   } else {

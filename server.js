@@ -2,7 +2,8 @@ var express = require('express'),
     app = express(),
     server = require('http').Server(app),
     io = require('socket.io').listen(server),
-    path = require('path');
+    path = require('path'),
+    now = require("performance-now");
 
 // static content
 app.use('/', express.static('static/public/css'));
@@ -52,15 +53,32 @@ io.on('connection', function(socket) {
     do {
       roomid = makeid();
     } while(rooms[roomid]);
-    rooms[roomid] = { pids: [] , win: winlimit.win, 
-                      limit: winlimit.limit, end: false};
+    rooms[roomid] = { pids: [], last: [0, 0], win: winlimit.win, 
+                      limit: winlimit.limit, end: false, start: false};
     console.log('room id is:' + roomid);
     socket.emit('made-room', roomid);
   });
 
   socket.on('score', function(welp) {
-    //console.log('user ' + id + ' has a score of ' + welp.score);
-    socket.broadcast.to(welp.roomid).emit('score', welp.score);
+    var rid = welp.roomid, pid = welp.pid, scr = welp.score;
+    var elap = 0;
+    if (rooms[rid].win == 'time') {
+      if (pid == rooms[rid].pids[0]) {
+        rooms[rid].last[0] = scr;
+      } else {
+        rooms[rid].last[1] = scr;
+      }
+      elap = now() - rooms[rid].tbeg;
+      if (1000 * rooms[rid].limit <= elap) {
+        if (rooms[rid].last[0] > rooms[rid].last[1]) {
+          io.to(rid).emit('winner', rooms[rid].pids[0]);
+        } else {
+          io.to(rid).emit('winner', rooms[rid].pids[1]);
+        }
+      }
+    }
+    socket.broadcast.to(rid).emit('score', 
+      {score: welp.score, elap: elap});
   });
 	
 	socket.on('request-pid', function(roomid) {
@@ -88,9 +106,14 @@ io.on('connection', function(socket) {
 			(rooms[rid].pids.length > 1 && 
 			rooms[rid].pids[1] == pid)) {
 			socket.emit('authorized', 
-        {win : rooms[rid].win, limit : rooms[rid].limit});
+        {win : rooms[rid].win, 
+         limit : rooms[rid].limit, 
+         start: rooms[rid].start});
 			socket.join(rid);
-      if (io.sockets.adapter.rooms[rid].length == 2) { //two users in room
+      if (!rooms[rid].start && //hasn't already started
+            io.sockets.adapter.rooms[rid].length == 2) { //two users in room
+        rooms[rid].start = true;
+        rooms[rid].tbeg = now() + 5000;
         io.to(rid).emit('start');
       }
 		} else {
