@@ -1,7 +1,7 @@
 h1 {
   text-align: center;
   font-weight: 500;
-  font-size: 2.3em;
+  font-size: 6.3em;
   font-family: "Palatino Linotype";
 }
 
@@ -10,6 +10,7 @@ h1 {
 }
 
 body{
+  text-align:center;
   color: white;
   background: url(forestbgman2.png) no-repeat; 
   background-size: 100%;
