@@ -29,8 +29,8 @@ for (var i = 0; i < buildings.length; i++) {
         .attr('class', 'button')
         .attr('onClick', 'buyBuilding(' + i.toString() + ')')
           .text("Buy " + buildings[i].name + "!")
-        )
-      );
+      )
+    );
 }
 
 function single() {
@@ -43,6 +43,7 @@ function single() {
 function updatePoints() {
   for (var i = 0; i < buildings.length; i++) {
     points += buildings[i].power * freq[i];
+    gross += buildings[i].power * freq[i];
   }
   document.getElementById("counter").innerHTML = points;
   document.getElementById("gCount").innerHTML = gross;
