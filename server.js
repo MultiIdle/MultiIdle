@@ -34,7 +34,7 @@ io.on('connection', function(socket) {
     socket.emit('made-room', roomid);
   });
   socket.on('score', function(score) {
-    console.log(score);
+    console.log('user ' + id + ' has a score of ' + score);
     socket.broadcast.emit('score', score);
   });
 
