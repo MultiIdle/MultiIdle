@@ -12,6 +12,7 @@ css = {
   cursor:         'wait' 
 };
 $.blockUI({ message: '<h1>Waiting for opponent...</h1><textarea id="link" style="font-size:18px">'+window.location.href+'</textarea>', fadeOut: 0, css: css});
+var socket = io();
 
 var buildings = [
   { name : "Hacker", base : 15, power: .1 },
@@ -123,68 +124,77 @@ var demolitionNumber = consumables[0].numberOf,
     doubleAgentNumber = consumables[2].numberOf,
     doubleAgentPrice = consumables[2].initial * Math.pow(consumables[2].scaleC, doubleAgentNumber);
 
-function selectForDemolition(){
-    console.log(demolitionPrice);
-    if (ownedBuildings > 0 && points >= demolitionPrice){
-        points -= demolitionPrice;
-        ++demolitionNumber;
-        demolitionPrice = consumables[0].initial * Math.pow(consumables[0].scaleC, demolitionNumber);
-        document.getElementById("points").innerHTML = points;
-        var buildingNo = Math.floor(1 +(Math.random() * (ownedBuildings-1)));
-        console.log(buildingNo);
-        for (var i = 0; i < freq.length; i++){
-            buildingNo -= freq[i];
-            if (buildingNo <= 0){
-                destroyBuilding(i);
-                break;
-            }
-        }
-    }
-}		
-
-function destroyBuilding(index){
-    base = buildings[index].base;
-    num = freq[index];
-    var price = base * Math.pow(scale, num);
-    pps -= buildings[index].power * 20;
-    --freq[index];
-    --ownedBuildings;
-    document.getElementById("freq" + index.toString()).innerHTML = freq[index];
-    document.getElementById("price" + index.toString()).innerHTML = price / scale;
-    document.getElementById("pps").innerHTML = pps;
+function selectForDemolition() {
+  socket.emit('demolish');
 }
 
-function raid(factor){
-    console.log(points);
-    console.log(raidPrice);
-    if (points >= raidPrice){
-        points -= raidPrice;
-        ++raidNumber;
-        raidPrice = consumables[1].initial * Math.pow(consumables[1].scaleC, raidNumber);
-        var difference =points * factor;
-        points -= difference;
-        gross -= difference;
-        document.getElementById("points").innerHTML = points;
-        document.getElementById("gross").innerHTML = gross;
+socket.on('demolish', function() {
+  if (ownedBuildings > 0 && points >= demolitionPrice){
+    points -= demolitionPrice;
+    ++demolitionNumber;
+    demolitionPrice = consumables[0].initial * Math.pow(consumables[0].scaleC, demolitionNumber);
+    document.getElementById("points").innerHTML = points;
+    var buildingNo = Math.floor(1 +(Math.random() * (ownedBuildings-1)));
+    console.log(buildingNo);
+    for (var i = 0; i < freq.length; i++) {
+      buildingNo -= freq[i];
+      if (buildingNo <= 0){
+        destroyBuilding(i);
+        break;
+      }
     }
+  }
+});
+
+function destroyBuilding(index) {
+  base = buildings[index].base;
+  num = freq[index];
+  var price = base * Math.pow(scale, num);
+  pps -= buildings[index].power * 20;
+  --freq[index];
+  --ownedBuildings;
+  document.getElementById("freq" + index.toString()).innerHTML = freq[index];
+  document.getElementById("price" + index.toString()).innerHTML = price / scale;
+  document.getElementById("pps").innerHTML = pps;
 }
 
-function doubleAgent(time){ 
-    console.log(doubleAgentPrice);
+function raid(factor) {
+  if (points >= raidPrice) {
+    socket.emit('raid', factor);
+    points -= raidPrice;
+    ++raidNumber;
+    raidPrice = consumables[1].initial 
+        * Math.pow(consumables[1].scaleC, raidNumber);
+  }
+}
+
+socket.on('raid', function(factor) {
+  var difference = points * factor;
+  points -= difference;
+  gross -= difference;
+  document.getElementById("points").innerHTML = points;
+  document.getElementById("gross").innerHTML = gross;
+});
+
+function doubleAgent(time) {
+  if (points >= doubleAgentPrice) {
+    socket.emit('doubleAgent', time);
+    points -= doubleAgentPrice;
+    ++doubleAgentNumber;
+    doubleAgentPrice = consumables[2].initial 
+      * Math.pow(consumables[2].scaleC, doubleAgentNumber);     
+  }
+  console.log('done');
+}
+
+socket.on('doubleAgent', function(time) {
+  flip = -flip;
+  console.log(flip);
+  window.setTimeout(function() {
+    flip = -flip;
     console.log(flip);
-    if (points >= doubleAgentPrice){
-        points -= doubleAgentPrice;
-        ++doubleAgentNumber;
-        doubleAgentPrice = consumables[2].initial * Math.pow(consumables[2].scaleC, doubleAgentNumber);
-        flip = -flip;
-        console.log(flip);
-        window.setTimeout(function(){
-        flip = -flip;
-        console.log(flip);
-        },time);        
-    }
-    console.log('done');
-}
+  }, time); 
+});
 
 window.setInterval(function(){
   updatePoints();
@@ -206,8 +216,6 @@ var urlsplit = window.location.href.split('/'),
     win,
     limit,
     origlimit;
-
-var socket = io();
 
 function readCookie(name) {
 		var nameEQ = name + "=";
