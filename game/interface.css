@@ -46,6 +46,7 @@
     font-size: .8em;
     background-color: #CFD2CD;
     text-align: center;
+    float: left;
     border-radius: 5px;
     font-family: serif;
 }
