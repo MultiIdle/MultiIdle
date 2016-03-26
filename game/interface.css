@@ -1,0 +1,57 @@
+#main {
+    text-align: center;
+    font-size: 1.5em;
+}
+
+#generator {
+    width: 40%;
+}
+
+.count {
+    font-size: 1.2em
+}
+
+#right {
+    float: right;
+    width: 30%;
+}
+
+#left {
+    width: 70%;
+    float: left;
+}
+
+.headings {
+    font-size: 1.3em;
+    font-weight: 500;
+    text-align: center;
+}
+
+.tableHeader {
+    background-color: lightgray;
+    font-weight: 600;
+    text-align: center;
+    padding: 5px;
+    font-size: 1.2em;
+}
+
+#upgrade {
+    width: 20%;
+    display: inline-block;
+}
+
+.button {
+    border: none;
+    padding: 7px;
+    font-size: .8em;
+    background-color: #CFD2CD;
+    text-align: center;
+    border-radius: 5px;
+    font-family: serif;
+}
+
+.button:hover {
+    background-color: #46494C;
+    color: white;
+    font-weight: 600;
+}

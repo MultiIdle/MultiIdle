@@ -1,14 +1,50 @@
 <!DOCTYPE html>
 
-
 <html>
-    <head>
-    <body>
-        <link rel="stylesheet" type="text/css" href="interface.css" />
+
+<head>
+    <link rel="stylesheet" type="text/css" href="interface.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="interface.js"></script>
+</head>
+
+<body>
+    <div id="main">
+        <h2>MultiIdle</h2>
+    <div id="left">
+        <input type="image" id="generator" src="http://img1.wikia.nocookie.net/__cb20140616194746/pandorahearts/de/images/4/42/Cookie.gif" onclick="single()"></input>
+        <br/>
+        <br/>
+        <span class="count">Number of cookies:
+        <span id="counter">0</span>
+        </span>
         
-        
-        
-        <script type="text/javascript" src="main.js"></script>
-    </body>
-    </head>
+        <br/>
+        <br/>
+        <span class="grossCount">Gross number of cookies: 
+        <span id="gCount">0</span></span>
+        <br>
+    </div>
+
+    <div id="right">
+        <table style="width:100%" id="buildings">
+            <tbody>
+                <tr>
+                    <p class="tableHeader">Upgrades</p>
+                </tr>
+                <hr/>
+                
+                <tr>
+                    <p class="tableFormat" onclick="buyClicker()">Upgrade for <span id="cursorCost">10</span> cookies
+                        <br>Upgrade count: <span id="cursorCount">0</span></p>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+    <script type="text/javascript" src="game.js"></script>
+</body>
+
 </html>
