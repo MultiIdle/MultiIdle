@@ -46,13 +46,12 @@ io.on('connection', function(socket) {
   console.log('user connected with id: ' + id);
 
   socket.on('make-room', function(winlimit) {
-    console.log(winlimit.win);
-    console.log(winlimit.limit);
     var roomid;
     do {
       roomid = makeid();
     } while(rooms[roomid]);
-    rooms[roomid] = { pids: [] };
+    rooms[roomid] = { pids: [] , win: winlimit.win, 
+                      limit: winlimit.limit, end: false};
     console.log('room id is:' + roomid);
     socket.emit('made-room', roomid);
   });
@@ -80,15 +79,21 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('auth', function(welp) {
-		if ((rooms[welp.roomid].pids.length > 0 && 
-			rooms[welp.roomid].pids[0] == welp.pid) ||
-			(rooms[welp.roomid].pids.length > 1 && 
-			rooms[welp.roomid].pids[1] == welp.pid)) {
-			socket.emit('authorized');
-			socket.join(welp.roomid);
+    var rid = welp.roomid, pid = welp.pid;
+    console.log("authentication " + rid + " " + pid);
+		if ((rooms[rid].pids.length > 0 && 
+			rooms[rid].pids[0] == pid) ||
+			(rooms[rid].pids.length > 1 && 
+			rooms[rid].pids[1] == pid)) {
+			socket.emit('authorized', 
+        {win : rooms[rid].win, limit : rooms[rid].limit});
+			socket.join(rid);
+      if (io.sockets.adapter.rooms[rid].length == 2) { //two users in room
+        io.to(rid).emit('start');
+      }
 		} else {
 			console.log('dangit: cookie failure');
-			console.log(rooms[welp.roomid]);
+			console.log(rooms[rid]);
 			console.log(welp);
 			socket.emit('dangit');
 		}
@@ -100,9 +105,17 @@ io.on('connection', function(socket) {
 			pid = makeid();
 		} while(pids[pid]);
 		pids[pid] = true;
-		socket.emit('pid', pid);
+		socket.emit('pid');
 		socket.emit('authorized');
 	});
+
+  socket.on('win', function(welp) {
+    var rid = welp.roomid, pid = welp.pid;
+    if (!rooms[rid].end) {
+      rooms[rid].end = true;
+      io.to(rid).emit('winner', pid);
+    }
+  });
 	
   socket.on('disconnect', function() {
     sockets[socket] = undefined;
