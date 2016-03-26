@@ -13,34 +13,20 @@ css = {
 };
 $.blockUI({ message: '<h1>Waiting for opponent...</h1><textarea id="link" style="font-size:18px">'+window.location.href+'</textarea>', fadeOut: 0, css: css});
 
-var pics = ['/ants.png', 
-'/bunny.png', 
-'/iron.png', 
-'/bike.png', 
-'/bigman.png', 
-'/fire.png', 
-'/scarybush.png',
-'/spider.png',
-'/pickle.png',
-'/gun.png',
-'/nic-cage.png',
-'/big-iron.png',
-'/wilde.png'];
-
 var buildings = [
-  { name : "Ants", base : 15, power: .1 },
-  { name : "Bunny", base : 100, power: 1 },
-  { name : "Iron", base : 1100, power: 8 },
-  { name : "Bike", base : 12000, power: 47 },
-  { name : "Bigger Man", base : 130000, power: 260 },
-  { name : "Fire", base : 1400000, power: 1400 },
-  { name : "Scary Bush", base : 20000000, power: 7800 },
-  { name : "Spider", base : 330000000, power: 44000 },
-  { name : "Pickle", base : 5100000000, power: 260000 },
-  { name : "Gun", base : 75000000000, power: 1600000 },
-  { name : "Nic Cage", base : 1000000000000, power: 10000000 },
-  { name : "Big Iron", base : 14000000000000, power: 65000000 },
-  { name : "Oscar Wilde", base : 170000000000000, power: 430000000 },
+  { name : "Hacker", base : 15, power: .1 },
+  { name : "Grandma", base : 100, power: 1 },
+  { name : "Farm", base : 1100, power: 8 },
+  { name : "Mine", base : 12000, power: 47 },
+  { name : "Factory", base : 130000, power: 260 },
+  { name : "Bank", base : 1400000, power: 1400 },
+  { name : "Temple", base : 20000000, power: 7800 },
+  { name : "Wizard Tower", base : 330000000, power: 44000 },
+  { name : "Shipment", base : 5100000000, power: 260000 },
+  { name : "Alchemy Lab", base : 75000000000, power: 1600000 },
+  { name : "Portal", base : 1000000000000, power: 10000000 },
+  { name : "Time Machine", base : 14000000000000, power: 65000000 },
+  { name : "Antimatter Condenser", base : 170000000000000, power: 430000000 },
   { name : "Prism", base : 2100000000000000, power: 2900000000}
 ];
 var scale = 1.1;
@@ -94,6 +80,8 @@ function updatePoints() {
   checkPointsWin();
 }
 
+var pics = ['/iron.png', '/fire.png', '/scarybush.png', '/gun.png', 'iron.png', 'big-iron.png', 'nic-cage.png'];
+
 function buyBuilding(idx) {
   var name = buildings[idx].name,
     base = buildings[idx].base,
@@ -108,7 +96,7 @@ function buyBuilding(idx) {
     document.getElementById("price" + idx.toString()).innerHTML = price * scale;
 		var x = document.createElement("IMG");
 		x.src = pics[idx];
-		x.style = "position: absolute; bottom: 10; z-index: 200";
+		x.style = "position: absolute; bottom: 10";
 		document.body.appendChild(x);  
     $("img").animate({left: '120%'}, {duration: 15000});
     document.getElementById("price" + idx.toString()).innerHTML = Math.round(price * scale);
