@@ -17,7 +17,8 @@ var buildings = [
 var scale = 1.1;
 
 var points = 0,
-  gross = 0;
+  gross = 0,
+  ogross = 0,
   freq = [];
 for (var i = 0; i < buildings.length; i++) {
   freq.push(0);
@@ -76,6 +77,70 @@ function buyBuilding(idx) {
 }
 
 window.setInterval(function(){
-  updatePoints()
+  updatePoints();
   console.log(points);
 }, 50);
+
+function readCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for(var i=0;i < ca.length;i++) {
+    var c = ca[i];
+    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+  }
+  return null;
+}
+
+function update() {
+  document.getElementById("gross").innerHTML = gross;
+  document.getElementById("ogross").innerHTML = ogross;
+}
+
+var urlsplit = window.location.href.split('/');
+var roomid = urlsplit[urlsplit.length - 1];
+
+var pid;
+
+var socket = io();
+//socket.join(roomid);
+
+function onDeleteRoom() {
+  console.log('delete this room!');
+};
+
+if (document.cookie && readCookie('roomid') == roomid) {
+  pid = readCookie('pid');
+  socket.emit('auth', {'pid': pid, 'roomid': roomid});
+  gross = parseInt(readCookie('score'));
+  ogross = parseInt(readCookie('oscore'));
+  update();
+}
+else {
+  socket.emit('request-pid', roomid);
+}
+
+socket.on('dangit', function(){window.location = '/';}); //do stuff
+
+socket.on('authorized', function(){}); //do stuff
+
+socket.on('score', function(oscore){
+  ogross = oscore;
+  update();
+});
+
+socket.on('pid', function(newpid) {
+  pid = newpid;
+  document.cookie = 'pid=' + newpid + ' ; roomid=' + roomid; //add to this
+  document.cookie = 'roomid=' + roomid;
+  document.cookie = 'score=' + gross;
+  document.cookie = 'oscore=' + ogross;
+});
+
+window.setInterval(function() {
+  socket.emit('score', {'score' : gross, 'roomid' : roomid});
+}, 500);
+window.setInterval(function() {
+  document.cookie= 'score=' + gross;
+  document.cookie="oscore=" + ogross;
+}, 1000);

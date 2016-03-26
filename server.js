@@ -6,10 +6,12 @@ var express = require('express'),
 
 app.use('/', express.static('static/public'));
 
+app.use('/game', express.static('static/public'));
+
 app.get('/game/:roomid', function(req, res) {
   var roomid = req.params.roomid;
   if (rooms[roomid]) { // room exists
-    res.sendFile(path.join(__dirname + '/static/public/simple.html'));
+    res.sendFile(path.join(__dirname + '/static/public/game.html'));
   } else {
     res.writeHead(500, {'content-type': 'text/plain'});
     res.end('Room does not exist!');
@@ -48,7 +50,7 @@ io.on('connection', function(socket) {
     socket.emit('made-room', roomid);
   });
   socket.on('score', function(welp) {
-    console.log('user ' + id + ' has a score of ' + welp.score);
+    //console.log('user ' + id + ' has a score of ' + welp.score);
     socket.broadcast.to(welp.roomid).emit('score', welp.score);
   });
 	
