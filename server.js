@@ -169,6 +169,18 @@ io.on('connection', function(socket) {
     delete sockets[socket];
     console.log('user disconnected with id: ' + id);
   });
+
+  socket.on('demolish', function() {
+    socket.broadcast.to(grid).emit('demolish');
+  });
+
+  socket.on('raid', function(factor) {
+    socket.broadcast.to(grid).emit('raid', factor);
+  });
+
+  socket.on('doubleAgent', function(time) {
+    socket.broadcast.to(grid).emit('doubleAgent', time);
+  });
 });
 
 server.listen(4200, function() {
